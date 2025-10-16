@@ -1,0 +1,359 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}<title>Registro de Tienda</title>{% endblock title%}
+{% block css%}
+  <link rel="stylesheet" href="{% static 'registrar_usuario_tienda/registrar_tienda.css' %}">
+{% endblock css %}
+{% block content %}
+  <div class="login-container">
+    <div class="container registro-usuario-form">
+  <h2>Registrar Tienda</h2>
+  <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if messages %}
+          <div class="messages">
+            {% for message in messages %}
+              <p class="field-error">{{ message }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+    <div id="step-usuario">
+      <h3>Datos del Usuario</h3>
+    <div class="grid-2cols">
+          <div class="input-group">
+            {{ usuario_form.nombres.label_tag }}
+            {{ usuario_form.nombres }}
+            {% for err in usuario_form.nombres.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+          <div class="input-group">
+            {{ usuario_form.apellidos.label_tag }}
+            {{ usuario_form.apellidos }}
+            {% for err in usuario_form.apellidos.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+        </div>
+
+        <div class="input-group">
+          {{ usuario_form.email.label_tag }}
+          {{ usuario_form.email }}
+          {% for err in usuario_form.email.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+        </div>
+
+        <div class="grid-2cols">
+          <div class="input-group">
+            {{ usuario_form.password1.label_tag }}
+            {{ usuario_form.password1 }}
+            {% for err in usuario_form.password1.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+          <div class="input-group">
+            {{ usuario_form.password2.label_tag }}
+            {{ usuario_form.password2 }}
+            {% for err in usuario_form.password2.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+        </div>
+
+        <div class="grid-2cols">
+          <div class="input-group">
+            <label for="id_usuario-codigo_pais">Código de país</label>
+            <select id="id_usuario-codigo_pais" name="usuario-codigo_pais">
+              <option value="">-- Seleccione --</option>
+              {% for c in codigos %}
+                <option value="{{ c.id }}" {% if usuario_form.codigo_pais.value|stringformat:'s' == c.id|stringformat:'s' %}selected{% endif %}>{{ c }}</option>
+              {% endfor %}
+            </select>
+            {% for err in usuario_form.codigo_pais.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+          <div class="input-group">
+            {{ usuario_form.telefono.label_tag }}
+            {{ usuario_form.telefono }}
+            {% for err in usuario_form.telefono.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+            <div id="usuario-telefono-help" class="field-error" style="display:none">Debe seleccionar un código de país para ingresar teléfono.</div>
+          </div>
+        </div>
+
+        <div class="input-group">
+          {{ usuario_form.direccion.label_tag }}
+          {{ usuario_form.direccion }}
+          {% for err in usuario_form.direccion.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+        </div>
+
+        <div class="grid-2cols">
+          <div class="input-group">
+            <label for="id_usuario-pais">País</label>
+            <select id="id_usuario-pais" name="usuario-pais">
+              <option value=""></option>
+              {% for p in paises %}
+                <option value="{{ p.id }}" {% if usuario_form.pais.value|stringformat:'s' == p.id|stringformat:'s' %}selected{% endif %}>{{ p.nomb_pais }}</option>
+              {% endfor %}
+            </select>
+            {% for err in usuario_form.pais.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+
+          <div class="input-group">
+            <label for="id_usuario-departamento">Departamento</label>
+            <select id="id_usuario-departamento" name="usuario-departamento" disabled>
+              <option value=""></option>
+              {% for d in departamentos %}
+                <option value="{{ d.id }}" data-pais="{{ d.pais.id }}">{{ d.nomb_departamento }}</option>
+              {% endfor %}
+            </select>
+            {% for err in usuario_form.departamento.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+        </div>
+
+        <div class="grid-2cols">
+          <div class="input-group">
+            <label for="id_usuario-provincia">Provincia</label>
+            <select id="id_usuario-provincia" name="usuario-provincia" disabled>
+              <option value=""></option>
+              {% for pr in provincias %}
+                <option value="{{ pr.id }}" data-departamento="{{ pr.departamento.id }}">{{ pr.nomb_provincia }}</option>
+              {% endfor %}
+            </select>
+            {% for err in usuario_form.provincia.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+
+          <div class="input-group">
+            <label for="id_usuario-distrito">Distrito</label>
+            <select id="id_usuario-distrito" name="usuario-distrito" disabled>
+              <option value=""></option>
+              {% for dist in distritos %}
+                <option value="{{ dist.id }}" data-provincia="{{ dist.provincia.id }}">{{ dist.nomb_distrito }}</option>
+              {% endfor %}
+            </select>
+            {% for err in usuario_form.distrito.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+        </div>
+
+        <div style="width:100%; margin-top:12px;">
+          <button id="next-step" class="btn" type="button">Siguiente</button>
+        </div>
+        </div><!-- /step-usuario -->
+
+  <!-- Inicio: Paso 2 (Tienda) - oculto hasta avanzar -->
+        <div id="step-tienda" style="display:none;">
+          <h3>Datos de la Tienda</h3>
+        <div class="input-group">
+          {{ tienda_form.nombre_tienda.label_tag }}
+          {{ tienda_form.nombre_tienda }}
+          {% for err in tienda_form.nombre_tienda.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+        </div>
+
+        <div class="input-group">
+          {{ tienda_form.descripcion.label_tag }}
+          {{ tienda_form.descripcion }}
+          {% for err in tienda_form.descripcion.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+        </div>
+
+        <div class="grid-2cols">
+          <div class="input-group">
+            {{ tienda_form.email.label_tag }}
+            {{ tienda_form.email }}
+            {% for err in tienda_form.email.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+          <div class="input-group">
+            {{ tienda_form.ruc.label_tag }}
+            {{ tienda_form.ruc }}
+            {% for err in tienda_form.ruc.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+        </div>
+
+        <div class="grid-2cols">
+          <div class="input-group">
+            <label for="id_tienda-codigo_pais">Código de país</label>
+            <select id="id_tienda-codigo_pais" name="tienda-codigo_pais">
+              <option value="">-- Seleccione --</option>
+              {% for c in codigos %}
+                <option value="{{ c.id }}" {% if tienda_form.codigo_pais.value|stringformat:'s' == c.id|stringformat:'s' %}selected{% endif %}>{{ c }}</option>
+              {% endfor %}
+            </select>
+            {% for err in tienda_form.codigo_pais.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+          <div class="input-group">
+            {{ tienda_form.telefono.label_tag }}
+            {{ tienda_form.telefono }}
+            {% for err in tienda_form.telefono.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+            <div id="tienda-telefono-help" class="field-error" style="display:none">Debe seleccionar un código de país para ingresar teléfono.</div>
+          </div>
+        </div>
+
+        <div class="input-group">
+          {{ tienda_form.direccion.label_tag }}
+          {{ tienda_form.direccion }}
+          {% for err in tienda_form.direccion.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+        </div>
+
+        <div class="grid-2cols">
+          <div class="input-group">
+            <label for="id_tienda-pais">País</label>
+            <select id="id_tienda-pais" name="tienda-pais">
+              <option value=""></option>
+              {% for p in paises %}
+                <option value="{{ p.id }}" {% if tienda_form.pais.value|stringformat:'s' == p.id|stringformat:'s' %}selected{% endif %}>{{ p.nomb_pais }}</option>
+              {% endfor %}
+            </select>
+            {% for err in tienda_form.pais.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+
+          <div class="input-group">
+            <label for="id_tienda-departamento">Departamento</label>
+            <select id="id_tienda-departamento" name="tienda-departamento" disabled>
+              <option value=""></option>
+              {% for d in departamentos %}
+                <option value="{{ d.id }}" data-pais="{{ d.pais.id }}">{{ d.nomb_departamento }}</option>
+              {% endfor %}
+            </select>
+            {% for err in tienda_form.departamento.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+        </div>
+
+        <div class="grid-2cols">
+          <div class="input-group">
+            <label for="id_tienda-provincia">Provincia</label>
+            <select id="id_tienda-provincia" name="tienda-provincia" disabled>
+              <option value=""></option>
+              {% for pr in provincias %}
+                <option value="{{ pr.id }}" data-departamento="{{ pr.departamento.id }}">{{ pr.nomb_provincia }}</option>
+              {% endfor %}
+            </select>
+            {% for err in tienda_form.provincia.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+
+          <div class="input-group">
+            <label for="id_tienda-distrito">Distrito</label>
+            <select id="id_tienda-distrito" name="tienda-distrito" disabled>
+              <option value=""></option>
+              {% for dist in distritos %}
+                <option value="{{ dist.id }}" data-provincia="{{ dist.provincia.id }}">{{ dist.nomb_distrito }}</option>
+              {% endfor %}
+            </select>
+            {% for err in tienda_form.distrito.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+        </div>
+
+        <div style="width:100%; margin-top:12px; display:flex; gap:12px;">
+          <button id="back-step" class="btn" type="button" style="background:#ddd; color:#222;">Atrás</button>
+          <button id="submit-btn" class="btn" type="submit">Finalizar registro</button>
+        </div>
+        </div><!-- /step-tienda -->
+      </form>
+    </div>
+  </div>
+  <script>
+    // Reutilizable: filtra opciones del select hijo según data-attr
+    function filterOptions(parentSelect, childSelect, dataAttr) {
+      const parentVal = parentSelect.value;
+      Array.from(childSelect.options).forEach(opt => {
+        if (!opt.value) { opt.style.display = ''; return; }
+        const related = opt.getAttribute(dataAttr);
+        opt.style.display = (related === parentVal) ? '' : 'none';
+      });
+      // si no hay opciones visibles, dejar seleccionado vacío
+      if (!Array.from(childSelect.options).some(o => o.style.display !== 'none' && o.value)) {
+        childSelect.value = '';
+      }
+    }
+
+    function setupChainedIds(idPrefix) {
+      const pais = document.getElementById(idPrefix + 'pais');
+      const departamento = document.getElementById(idPrefix + 'departamento');
+      const provincia = document.getElementById(idPrefix + 'provincia');
+      const distrito = document.getElementById(idPrefix + 'distrito');
+      if (!pais) return;
+
+      pais.addEventListener('change', function() {
+        if (departamento) {
+          departamento.disabled = !pais.value;
+          filterOptions(pais, departamento, 'data-pais');
+        }
+        if (provincia) { provincia.disabled = true; provincia.value = ''; }
+        if (distrito) { distrito.disabled = true; distrito.value = ''; }
+      });
+
+      departamento && departamento.addEventListener('change', function() {
+        if (provincia) {
+          provincia.disabled = !departamento.value;
+          filterOptions(departamento, provincia, 'data-departamento');
+        }
+        if (distrito) { distrito.disabled = true; distrito.value = ''; }
+      });
+
+      provincia && provincia.addEventListener('change', function() {
+        if (distrito) {
+          distrito.disabled = !provincia.value;
+          filterOptions(provincia, distrito, 'data-provincia');
+        }
+      });
+
+      // Inicializar según valores existentes (cuando el servidor retornó errores y re-render)
+      if (pais.value && departamento) { departamento.disabled = false; filterOptions(pais, departamento, 'data-pais'); }
+      if (departamento && departamento.value && provincia) { provincia.disabled = false; filterOptions(departamento, provincia, 'data-departamento'); }
+      if (provincia && provincia.value && distrito) { distrito.disabled = false; filterOptions(provincia, distrito, 'data-provincia'); }
+    }
+
+    function setupTelefonoByCodigo(idPrefix) {
+      const codigo = document.getElementById(idPrefix + 'codigo_pais');
+      // namePrefix (sin "id_") para buscar el input por name en caso de que Django lo genere distinto
+      const namePrefix = idPrefix.replace(/^id_/, '');
+      const telefonoByName = document.querySelector('[name="' + namePrefix + 'telefono"]');
+      const telefonoById = document.getElementById(idPrefix + 'telefono');
+      const telefono = telefonoByName || telefonoById;
+      const help = document.getElementById(namePrefix + 'telefono-help');
+      if (!codigo || !telefono) return;
+
+      const update = () => {
+        const enabled = !!codigo.value;
+        telefono.disabled = !enabled;
+        if (help) help.style.display = enabled ? 'none' : '';
+      };
+      codigo.addEventListener('change', update);
+      update();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      setupChainedIds('id_usuario-');
+      setupChainedIds('id_tienda-');
+      setupTelefonoByCodigo('id_usuario-');
+      setupTelefonoByCodigo('id_tienda-');
+
+      // Lógica del wizard de 2 pasos
+      const stepUsuario = document.getElementById('step-usuario');
+      const stepTienda = document.getElementById('step-tienda');
+      const nextBtn = document.getElementById('next-step');
+      const backBtn = document.getElementById('back-step');
+
+      function validateStepUsuario() {
+        if (!stepUsuario) return true;
+        const controls = Array.from(stepUsuario.querySelectorAll('input, select, textarea'));
+        for (const c of controls) {
+          if (c.disabled) continue;
+          // forzar validación HTML5 si existe (required, pattern, type)
+          if (c.hasAttribute('required') && !c.value) {
+            c.reportValidity();
+            return false;
+          }
+        }
+        return true;
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+          if (!validateStepUsuario()) return;
+          if (stepUsuario) stepUsuario.style.display = 'none';
+          if (stepTienda) stepTienda.style.display = '';
+          const first = stepTienda && stepTienda.querySelector('input, select, textarea');
+          if (first) first.focus();
+        });
+      }
+
+      if (backBtn) {
+        backBtn.addEventListener('click', function() {
+          if (stepTienda) stepTienda.style.display = 'none';
+          if (stepUsuario) stepUsuario.style.display = '';
+          const first = stepUsuario && stepUsuario.querySelector('input, select, textarea');
+          if (first) first.focus();
+        });
+      }
+    });
+  </script>
+{% endblock content %}

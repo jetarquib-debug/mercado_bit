@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Marketplace{% endblock title %}</title>
+
+    <!-- CSS principal -->
+    <link rel="stylesheet" href="{% static 'Barra_marketplace.css' %}">
+
+    <!-- Bloque extra para CSS específico de cada página -->
+    {% block css %}
+    {% endblock css %}
+</head>
+
+<body>
+<div class="general">
+    <header class="header_contenedor">
+        <div class="logo">
+            <a href="{% url 'home' %}"><h1>Linio</h1></a>
+        </div>
+
+        <div class="categorias">
+            <button id="categorias">Categorías▲</button>
+        </div>
+
+        <div>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar en Linio">
+                <button>Buscar</button>
+            </div>
+        </div>
+
+        <div class="registro">
+            <a href="{% url 'registrar_usuario_tienda:registro_usuario' %}#registro">Registrar</a>
+        </div>
+
+        <div class="compras">
+            <a href="#">Mis compras</a>
+        </div>
+        <div class="carrito">
+            <a href="#">🛒</a>
+        </div>
+    </header>
+
+    <div class="header_contenedor_secundario">
+        <a href="{% url 'registrar_usuario_tienda:registro_tienda' %}#registro">Como vendedor</a>
+    </div>
+
+    <!-- 🔹 Bloque para el contenido dinámico -->
+    {% block content %}
+    {% endblock content %}
+
+</div>
+{% block js %}{% endblock js %}
+
+</body>
+</html>

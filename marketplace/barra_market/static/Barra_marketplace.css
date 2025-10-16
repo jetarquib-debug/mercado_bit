@@ -1,0 +1,100 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    }
+
+.header_contenedor {
+    display: flex;
+    background: linear-gradient(135deg, #6983f3, #8133cf, #d63384, #f06595);
+    width: 100vw;
+    height: 10vh;
+    align-items: center;
+}
+
+.logo{
+    display: flex;
+    color: white;
+    align-items: center;
+    margin-left: auto;
+    height: 100%;
+}
+
+.logo a {
+    color: white;
+    font-size: 1.5vw;
+}
+
+.categorias{
+    display: flex;
+    color: white;
+    align-items: center;
+    margin-left: 5vw;
+    margin-right: 5vw;
+}
+.categorias button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5vw;
+    cursor: pointer;
+}
+.search-bar {
+    display: inline;
+    width: 15vw;
+}
+.search-bar input {
+    width: 30vw;
+    height: 5vh;
+    padding: 0.5vw;
+    border-radius: 0.5vw;
+    border: none;
+    font-size: 1vw;
+}
+.search-bar button {
+    padding: 0.5vw 1vw;
+    border: none;
+    border-radius: 0.5vw;
+    background-color: #f06595;
+    color: white;
+    font-size: 1vw;
+    cursor: pointer;
+}
+.registro{
+    display: flex;
+    color: white;
+    align-items: center;
+    padding-left: 5vw;
+}
+.registro a {
+    color: white;
+    font-size: 1.5vw;
+}
+.compras{
+    display: flex;
+    color: white;
+    align-items: center;
+    padding-left: 5vw;
+    padding-right: 5vw;
+}
+.compras a {
+    color: white;
+    font-size: 1.5vw;
+}
+.carrito{
+    display: flex;
+    color: white;
+    align-items: center;
+    margin-right: auto;
+}
+.carrito a {
+    color: white;
+    font-size: 2vw;
+}
+.header_contenedor_secundario {
+    display: flex;
+    background: linear-gradient(135deg, #ffffff, #575353);
+    height: 3vh;
+    align-items: center;
+}

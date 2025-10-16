@@ -1,0 +1,232 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}<title>Registro de Usuario</title>{% endblock title %}
+{% block css%}
+  <link rel="stylesheet" href="{% static 'registrar_usuario_tienda/registrar_usuario.css' %}">
+{% endblock css %}
+{% block content %}
+  <div class="login-container">
+    <div class="container registro-usuario-form">
+      <h2>Registrar Usuario</h2>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if messages %}
+          <div class="messages">
+            {% for message in messages %}
+              <p class="field-error">{{ message }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="grid-2cols">
+          <div class="input-group">
+            {{ form.nombres.label_tag }}
+            {{ form.nombres }}
+            {% for err in form.nombres.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+          <div class="input-group">
+            {{ form.apellidos.label_tag }}
+            {{ form.apellidos }}
+            {% for err in form.apellidos.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+        </div>
+
+        <div class="input-group">
+          {{ form.email.label_tag }}
+          {{ form.email }}
+          {% for err in form.email.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+        </div>
+
+        <div class="grid-2cols">
+          <div class="input-group">
+            {{ form.password1.label_tag }}
+            {{ form.password1 }}
+            {% for err in form.password1.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+          <div class="input-group">
+            {{ form.password2.label_tag }}
+            {{ form.password2 }}
+            {% for err in form.password2.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+        </div>
+
+        <div class="grid-2cols">
+          <div class="input-group">
+            <label for="id_codigo_pais">Código de país</label>
+            <select id="id_codigo_pais" name="codigo_pais">
+              <option value="">-- Seleccione --</option>
+              {% for c in codigos %}
+                <option value="{{ c.id }}" {% if form.codigo_pais.value|stringformat:'s' == c.id|stringformat:'s' %}selected{% endif %}>{{ c }}</option>
+              {% endfor %}
+            </select>
+            {% for err in form.codigo_pais.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+          <div class="input-group">
+            {{ form.telefono.label_tag }}
+            {{ form.telefono }}
+            {% for err in form.telefono.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+            <div id="telefono-help" class="field-error" style="display:none">Debe seleccionar un código de país para ingresar teléfono.</div>
+          </div>
+        </div>
+
+        <div class="input-group">
+          {{ form.direccion.label_tag }}
+          {{ form.direccion }}
+          {% for err in form.direccion.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+        </div>
+
+        <div class="grid-2cols">
+          <div class="input-group">
+            <label for="id_pais">País</label>
+            <select id="id_pais" name="pais">
+              <option value=""></option>
+              {% for p in paises %}
+                <option value="{{ p.id }}" {% if form.pais.value|stringformat:'s' == p.id|stringformat:'s' %}selected{% endif %}>{{ p.nomb_pais }}</option>
+              {% endfor %}
+            </select>
+            {% for err in form.pais.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+
+          <div class="input-group">
+            <label for="id_departamento">Departamento</label>
+            <select id="id_departamento" name="departamento" disabled>
+              <option value=""></option>
+              {% for d in departamentos %}
+                <option value="{{ d.id }}" data-pais="{{ d.pais.id }}">{{ d.nomb_departamento }}</option>
+              {% endfor %}
+            </select>
+            {% for err in form.departamento.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+        </div>
+
+        <div class="grid-2cols">
+          <div class="input-group">
+            <label for="id_provincia">Provincia</label>
+            <select id="id_provincia" name="provincia" disabled>
+              <option value=""></option>
+              {% for pr in provincias %}
+                <option value="{{ pr.id }}" data-departamento="{{ pr.departamento.id }}">{{ pr.nomb_provincia }}</option>
+              {% endfor %}
+            </select>
+            {% for err in form.provincia.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+
+          <div class="input-group">
+            <label for="id_distrito">Distrito</label>
+            <select id="id_distrito" name="distrito" disabled>
+              <option value=""></option>
+              {% for dist in distritos %}
+                <option value="{{ dist.id }}" data-provincia="{{ dist.provincia.id }}">{{ dist.nomb_distrito }}</option>
+              {% endfor %}
+            </select>
+            {% for err in form.distrito.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+        </div>
+
+        <div class="grid-2cols">
+          <div class="input-group">
+            {{ form.sexo.label_tag }}
+            {{ form.sexo }}
+            {% for err in form.sexo.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+          <div class="input-group">
+            {{ form.dni_ce.label_tag }}
+            {{ form.dni_ce }}
+            {% for err in form.dni_ce.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+          </div>
+        </div>
+
+        <div style="width:100%; margin-top:12px;">
+          <button class="btn" type="submit">registrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script>
+    // Filtrar departamentos por país
+    const departamentos = Array.from(document.querySelectorAll('#id_departamento option'))
+      .slice(1); // quitar placeholder
+    const provincias = Array.from(document.querySelectorAll('#id_provincia option')).slice(1);
+    const distritos = Array.from(document.querySelectorAll('#id_distrito option')).slice(1);
+
+    const paisSelect = document.getElementById('id_pais');
+    const depSelect = document.getElementById('id_departamento');
+    const provSelect = document.getElementById('id_provincia');
+    const distSelect = document.getElementById('id_distrito');
+    const codigoSelect = document.getElementById('id_codigo_pais');
+    const telefonoInput = document.getElementById('id_telefono');
+    const telefonoHelp = document.getElementById('telefono-help');
+
+    function resetSelect(select){
+      select.selectedIndex = 0;
+      Array.from(select.options).forEach(opt=> opt.style.display='');
+    }
+
+    paisSelect && paisSelect.addEventListener('change', ()=>{
+      const paisId = paisSelect.value;
+      // mostrar solo departamentos del pais
+      Array.from(depSelect.options).forEach(opt=>{
+        if(!opt.value) return; // placeholder
+        opt.style.display = (opt.dataset.pais === paisId) ? '' : 'none';
+      });
+      // habilitar departamento si hay pais seleccionado, sino deshabilitar
+      if(paisId){
+        depSelect.disabled = false;
+      } else {
+        depSelect.disabled = true;
+      }
+      // reset provincia/distrito
+      provSelect.selectedIndex = 0;
+      distSelect.selectedIndex = 0;
+      provSelect.disabled = true;
+      distSelect.disabled = true;
+      Array.from(provSelect.options).forEach(opt=> opt.style.display='');
+      Array.from(distSelect.options).forEach(opt=> opt.style.display='');
+    });
+
+    depSelect && depSelect.addEventListener('change', ()=>{
+      const depId = depSelect.value;
+      Array.from(provSelect.options).forEach(opt=>{
+        if(!opt.value) return;
+        opt.style.display = (opt.dataset.departamento === depId) ? '' : 'none';
+      });
+      // habilitar provincia si hay departamento seleccionado
+      if(depId){
+        provSelect.disabled = false;
+      } else {
+        provSelect.disabled = true;
+      }
+      distSelect.selectedIndex = 0;
+      distSelect.disabled = true;
+      Array.from(distSelect.options).forEach(opt=> opt.style.display='');
+    });
+
+    provSelect && provSelect.addEventListener('change', ()=>{
+      const provId = provSelect.value;
+      Array.from(distSelect.options).forEach(opt=>{
+        if(!opt.value) return;
+        opt.style.display = (opt.dataset.provincia === provId) ? '' : 'none';
+      });
+      // habilitar distrito solo si hay provincia seleccionada
+      distSelect.disabled = !provId;
+    });
+
+    // telefono depende de codigo_pais
+    codigoSelect && codigoSelect.addEventListener('change', ()=>{
+      if(!codigoSelect.value){
+        telefonoInput && (telefonoInput.disabled = true);
+        telefonoHelp.style.display = '';
+      } else {
+        telefonoInput && (telefonoInput.disabled = false);
+        telefonoHelp.style.display = 'none';
+      }
+    });
+
+    // inicializar estado telefono
+    if(codigoSelect && !codigoSelect.value){
+      telefonoInput && (telefonoInput.disabled = true);
+      telefonoHelp.style.display = '';
+    }
+  </script>
+{% endblock content %}

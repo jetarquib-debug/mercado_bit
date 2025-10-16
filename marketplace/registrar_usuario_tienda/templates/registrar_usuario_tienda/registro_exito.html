@@ -1,0 +1,12 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}<title>Registro de Tienda</title>{% endblock title%}
+{% block css%}
+  <link rel="stylesheet" href="{% static 'registrar_usuario_tienda/registrar_tienda.css' %}">
+{% endblock css %}
+{% block content %}
+  <h1>Registro completado</h1>
+  <p>Su usuario y tienda se han registrado correctamente.</p>
+  <a href="/">Ir al inicio</a>
+{% endblock content %}
