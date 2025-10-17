@@ -1,6 +1,6 @@
 from django.db import models
 from usuario.models import Usuario, CodigoPais, Distrito, Provincia, Departamento, Pais
-
+from django.utils.html import format_html
 
 # --- IMAGEN DE PERFIL DE TIENDA ---
 class ImagenPerfilTienda(models.Model):
@@ -20,7 +20,16 @@ class ImagenPerfilTienda(models.Model):
     def __str__(self):
         return f"Imagen ({'Principal' if self.es_principal else 'Secundaria'}) - {self.fecha_subida:%Y-%m-%d}"
 
+    # 🖼️ Vista previa para el admin
+    def vista_previa(self):
+        if self.imagen:
+            return format_html(
+                '<img src="{}" width="80" height="80" style="border-radius:8px; object-fit:cover;" />',
+                self.imagen.url
+            )
+        return "(Sin imagen)"
 
+    vista_previa.short_description = "Vista previa"
 
 # --- MODELO TIENDA ---
 class Tienda(models.Model):

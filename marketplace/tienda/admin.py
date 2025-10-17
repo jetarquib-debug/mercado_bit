@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from .models import Tienda, ImagenPerfilTienda
 
 
@@ -8,7 +9,6 @@ class ImagenPerfilTiendaInline(admin.TabularInline):
     extra = 1
     verbose_name = "Imagen de la tienda"
     verbose_name_plural = "Imágenes de la tienda"
-    autocomplete_fields = ['imagenperfiltineda']
 
 
 # --- ADMIN para ImagenPerfilTienda ---
@@ -23,9 +23,11 @@ class ImagenPerfilTiendaAdmin(admin.ModelAdmin):
     def vista_previa(self, obj):
         """Muestra una vista previa de la imagen en el panel de admin."""
         if obj.imagen:
-            return f'<img src="{obj.imagen.url}" width="80" style="border-radius:8px;"/>'
+            return format_html(
+                '<img src="{}" width="80" style="border-radius:8px; box-shadow:0 0 4px rgba(0,0,0,0.2);"/>',
+                obj.imagen.url
+            )
         return "(Sin imagen)"
-    vista_previa.allow_tags = True
     vista_previa.short_description = "Vista previa"
 
 
@@ -33,13 +35,25 @@ class ImagenPerfilTiendaAdmin(admin.ModelAdmin):
 @admin.register(Tienda)
 class TiendaAdmin(admin.ModelAdmin):
     list_display = (
-        'nombre_tienda', 'usuario', 'email', 'telefono_formateado',
-        'ubicacion_completa', 'fecha_registro', 'imagenes_contador'
+        'vista_miniatura',  # 👈 nueva columna de imagen
+        'nombre_tienda',
+        'usuario',
+        'email',
+        'telefono_formateado',
+        'ubicacion_completa',
+        'fecha_registro',
+        'imagenes_contador',
     )
+    list_display_links = ('vista_miniatura', 'nombre_tienda')
     list_filter = ('pais', 'departamento', 'provincia', 'fecha_registro')
     search_fields = ('nombre_tienda', 'usuario__email', 'email', 'ruc')
-    readonly_fields = ('fecha_registro', 'vista_imagen_principal', 'ubicacion_completa', 'imagenes_contador')
-    inlines = []  # Podrías añadir ImagenPerfilTiendaInline aquí si prefieres verlas dentro de la tienda
+    readonly_fields = (
+        'fecha_registro',
+        'vista_imagen_principal',
+        'ubicacion_completa',
+        'imagenes_contador',
+    )
+    inlines = [ImagenPerfilTiendaInline]
 
     fieldsets = (
         ("Información General", {
@@ -62,12 +76,28 @@ class TiendaAdmin(admin.ModelAdmin):
 
     filter_horizontal = ('imagenes',)
 
-    def vista_imagen_principal(self, obj):
-        """Vista previa de la imagen principal en el panel."""
+    # --- MINIATURA EN LA LISTA ---
+    def vista_miniatura(self, obj):
+        """Muestra la imagen principal como miniatura en la lista."""
         if obj.imagen_principal:
-            return f'<img src="{obj.imagen_principal}" width="100" style="border-radius:10px;"/>'
+            return format_html(
+                '<img src="{}" width="50" height="50" style="object-fit:cover; border-radius:6px; box-shadow:0 0 3px rgba(0,0,0,0.3);"/>',
+                obj.imagen_principal
+            )
+        return format_html(
+            '<div style="width:50px; height:50px; border-radius:6px; background:#eee; display:flex; align-items:center; justify-content:center; color:#999;">—</div>'
+        )
+    vista_miniatura.short_description = "Imagen"
+
+    # --- VISTA PREVIA DETALLADA ---
+    def vista_imagen_principal(self, obj):
+        """Vista previa de la imagen principal en el panel de detalle."""
+        if obj.imagen_principal:
+            return format_html(
+                '<img src="{}" width="150" style="border-radius:10px; box-shadow:0 0 6px rgba(0,0,0,0.3);"/>',
+                obj.imagen_principal
+            )
         return "(Sin imagen principal)"
-    vista_imagen_principal.allow_tags = True
     vista_imagen_principal.short_description = "Imagen principal"
 
     class Media:

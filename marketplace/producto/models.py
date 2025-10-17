@@ -24,12 +24,16 @@ class Marca(models.Model):
     def __str__(self):
         return self.nomb_marca
 
-    # Vista previa en admin
     def vista_previa(self):
-        if self.imagen_marca:
-            return format_html('<img src="{}" width="60" height="60" style="object-fit:cover; border-radius:8px;" />', self.imagen_marca.url)
+        """Muestra vista previa de la imagen en el admin."""
+        if self.imagen_marca and hasattr(self.imagen_marca, 'url'):
+            return format_html(
+                '<img src="{}" width="60" height="60" style="object-fit:cover; border-radius:8px; box-shadow:0 0 3px #888;" />',
+                self.imagen_marca.url
+            )
         return "(Sin imagen)"
     vista_previa.short_description = "Vista previa"
+    vista_previa.allow_tags = True
 
 
 # ==============================
@@ -54,10 +58,15 @@ class Categoria(models.Model):
         return self.nomb_ca
 
     def vista_previa(self):
-        if self.imagen_categoria:
-            return format_html('<img src="{}" width="60" height="60" style="object-fit:cover; border-radius:8px;" />', self.imagen_categoria.url)
+        """Vista previa de la categoría en admin."""
+        if self.imagen_categoria and hasattr(self.imagen_categoria, 'url'):
+            return format_html(
+                '<img src="{}" width="60" height="60" style="object-fit:cover; border-radius:8px; box-shadow:0 0 3px #888;" />',
+                self.imagen_categoria.url
+            )
         return "(Sin imagen)"
     vista_previa.short_description = "Vista previa"
+    vista_previa.allow_tags = True
 
 
 # ==============================
@@ -99,34 +108,34 @@ class Producto(models.Model):
         return f"{self.nomb_prod} ({self.tienda.nombre_tienda})"
 
     def clean(self):
-        """Validación simple de datos."""
+        """Validación de datos antes de guardar."""
         from django.core.exceptions import ValidationError
         if self.precio <= 0:
             raise ValidationError("El precio debe ser mayor a cero.")
         if self.stock < 0:
             raise ValidationError("El stock no puede ser negativo.")
 
-    # --- Propiedades útiles ---
     @property
     def disponible(self):
-        """Devuelve True si el producto tiene stock y está disponible."""
+        """Retorna True si el producto tiene stock disponible."""
         return self.estado == 'disponible' and self.stock > 0
 
     @property
     def imagen_principal_url(self):
-        """Retorna la imagen principal del producto o una por defecto."""
+        """Devuelve la imagen principal o una por defecto."""
         imagen = self.imagenes.filter(es_principal=True).first()
         if imagen and imagen.imagen:
             return imagen.imagen.url
         return '/media/productos_imagenes/default_producto.png'
 
     def vista_previa(self):
-        """Vista previa de la imagen en el admin."""
+        """Muestra vista previa del producto en admin."""
         return format_html(
-            '<img src="{}" width="60" height="60" style="object-fit:cover; border-radius:8px;" />',
+            '<img src="{}" width="60" height="60" style="object-fit:cover; border-radius:8px; box-shadow:0 0 3px #888;" />',
             self.imagen_principal_url
         )
     vista_previa.short_description = "Vista previa"
+    vista_previa.allow_tags = True
 
 
 # ==============================
@@ -153,7 +162,12 @@ class ImagenProducto(models.Model):
         return f"Imagen de {self.producto.nomb_prod}"
 
     def vista_previa(self):
-        if self.imagen:
-            return format_html('<img src="{}" width="60" height="60" style="object-fit:cover; border-radius:8px;" />', self.imagen.url)
+        """Vista previa de imagen en el admin."""
+        if self.imagen and hasattr(self.imagen, 'url'):
+            return format_html(
+                '<img src="{}" width="60" height="60" style="object-fit:cover; border-radius:8px; box-shadow:0 0 3px #888;" />',
+                self.imagen.url
+            )
         return "(Sin imagen)"
     vista_previa.short_description = "Vista previa"
+    vista_previa.allow_tags = True

@@ -129,7 +129,6 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-from decouple import config
 import os
 
 # 📸 Archivos multimedia (subidas de usuarios)
