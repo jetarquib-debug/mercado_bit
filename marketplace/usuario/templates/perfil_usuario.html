@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Perfil de usuario</title>
+</head>
+<body>
+    <h1>Perfil de {{ usuario.nombres }} {{ usuario.apellidos }}</h1>
+
+    <div>
+        <img src="{{ usuario.imagen_principal }}" alt="Imagen perfil" width="150" height="150" style="border-radius:8px; object-fit:cover;" />
+    </div>
+
+    <ul>
+        <li>Email: {{ usuario.email }}</li>
+        <li>Teléfono: {{ usuario.telefono }}</li>
+        <li>Dirección: {{ usuario.direccion }}</li>
+    </ul>
+
+    <p><a href="{% url 'inicio_sesion:logout' %}">Cerrar sesión</a></p>
+    <p><a href="/">Volver al inicio</a></p>
+</body>
+</html>

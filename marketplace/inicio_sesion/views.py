@@ -1,27 +1,37 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.hashers import check_password
+from usuario.models import Usuario
+from .forms import LoginUsuarioForm
 
-from .forms import LoginForm
 
-
-def login_view(request):
-	"""Procesa el formulario de inicio de sesión. Si es POST autentica y hace login,
-	si es GET devuelve el formulario vacío. Esta vista está pensada también
-	para ser incluida como fragmento en `home.html` (render via include).
-	"""
-	if request.method == 'POST':
-		form = LoginForm(request.POST)
+def login_usuario(request):
+	if request.method == "POST":
+		form = LoginUsuarioForm(request.POST)
 		if form.is_valid():
-			user = form.get_user()
-			login(request, user)
-			messages.success(request, f'Bienvenido {user.get_username()}')
-			# Redirigir a la página desde donde vino o al home
-			next_url = request.POST.get('next') or request.GET.get('next')
-			if next_url:
-				return redirect(next_url)
-			return redirect('home')
+			email = form.cleaned_data["email"]
+			contrasena = form.cleaned_data["contrasena"]
+
+			try:
+				usuario = Usuario.objects.get(email=email)
+			except Usuario.DoesNotExist:
+				messages.error(request, "No existe un usuario con ese correo.")
+				return render(request, "inicio_sesion/iniciar_sesion.html", {"form": form})
+
+			if check_password(contrasena, usuario.contrasena):
+				request.session["usuario_id"] = usuario.id
+				request.session["usuario_nombre"] = usuario.nombres
+				messages.success(request, f"Bienvenido, {usuario.nombres} 👋")
+				return redirect('usuario:perfil')
+			else:
+				messages.error(request, "Contraseña incorrecta.")
 	else:
-		form = LoginForm()
-	# Si la plantilla se incluye dentro de home, request puede requerir el context
-	return render(request, 'inicio_sesion/iniciar_sesion.html', {'form': form})
+		form = LoginUsuarioForm()
+
+	return render(request, "inicio_sesion/iniciar_sesion.html", {"form": form})
+
+
+def logout_usuario(request):
+	request.session.flush()
+	messages.info(request, "Sesión cerrada correctamente 👋")
+	return redirect('inicio_sesion:login')

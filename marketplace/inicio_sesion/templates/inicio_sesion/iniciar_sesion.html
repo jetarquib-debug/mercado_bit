@@ -1,7 +1,7 @@
 {% extends "home.html" %}
 {% load static %}
-{% block css%}
-<link rel="stylesheet" href="{% static 'iniciar_sesion.css' %}">
+{% block css %}
+<link rel="stylesheet" href="{% static 'inicio_sesion/iniciar_sesion.css' %}">
 {% endblock css %}
 {% block content %}
     <div class="login-container">
@@ -9,23 +9,37 @@
         <h2>Iniciar sesión</h2>
         <form method="post" action="{% url 'inicio_sesion:login' %}" class="registro-usuario-form">
         {% csrf_token %}
+
+        {# Mostrar mensajes flash #}
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         {% if form.non_field_errors %}
             <div class="error-messages">{{ form.non_field_errors }}</div>
         {% endif %}
 
         <div class="input-group">
-            <label for="id_username">Usuario o email</label>
-            {{ form.username }}
-            {% if form.username.errors %}
-            <div class="field-error">{{ form.username.errors }}</div>
+            <label for="id_email">Usuario o email</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+            <div class="field-error">{{ form.email.errors }}</div>
+            {% else %}
+            <div class="field-error" style="min-height:1.2em;"></div>
             {% endif %}
         </div>
 
         <div class="input-group">
-            <label for="id_password">Contraseña</label>
-            {{ form.password }}
-            {% if form.password.errors %}
-            <div class="field-error">{{ form.password.errors }}</div>
+            <label for="id_contrasena">Contraseña</label>
+            {{ form.contrasena }}
+            {% if form.contrasena.errors %}
+            <div class="field-error">{{ form.contrasena.errors }}</div>
+            {% else %}
+            <div class="field-error" style="min-height:1.2em;"></div>
             {% endif %}
         </div>
 

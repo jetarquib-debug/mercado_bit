@@ -59,7 +59,8 @@ def cargar_usuarios_basicos():
             defaults={
                 "nombres": data["nombres"],
                 "apellidos": data["apellidos"],
-                "contrasena": make_password(data["contrasena"]),
+                # Pasamos la contraseña en texto para que el modelo la encripte en save()
+                "contrasena": data["contrasena"],
                 "telefono": data["telefono"],
                 "direccion": data["direccion"],
                 "sexo": data["sexo"],
@@ -75,7 +76,21 @@ def cargar_usuarios_basicos():
         if creado:
             print(f"✅ Usuario creado: {usuario}")
         else:
-            print(f"⚠️ Usuario ya existe: {usuario.email}")
+            # Normalizar la contraseña actualizando a la versión en texto para que save() la encripte
+            usuario.contrasena = data["contrasena"]
+            usuario.nombres = data["nombres"]
+            usuario.apellidos = data["apellidos"]
+            usuario.telefono = data["telefono"]
+            usuario.direccion = data["direccion"]
+            usuario.sexo = data["sexo"]
+            usuario.dni_ce = data["dni_ce"]
+            usuario.pais = peru
+            usuario.codigo_pais = codigo_peru
+            usuario.departamento = departamento_lima
+            usuario.provincia = provincia_lima
+            usuario.distrito = distrito_miraflores
+            usuario.save()
+            print(f"⚠️ Usuario actualizado: {usuario.email} (contraseña normalizada)")
 
 
 # ===============================
