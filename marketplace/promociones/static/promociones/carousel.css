@@ -1,0 +1,159 @@
+/*
+  carousel.css
+  - Versión comentada en español
+  - Objetivo: adaptarse al tamaño de ventana usando unidades fluidas
+  - Recomendación: mantener las imágenes subidas a MEDIA para que se sirvan
+    desde /media/ (campo ImageField). El CSS solo controla la presentación.
+
+  Estrategia responsive usada:
+  - Variables CSS para colores y escalas base
+  - Unidades fluidas con clamp() para tamaños de fuente
+  - height controlada por aspect-ratio y por CSS custom property --carousel-height
+  - Media queries mínimas; preferimos comportamiento fluido
+*/
+
+:root{
+  /* colores principales */
+  --accent: #ff4d94;   /* color principal del CTA y dot activo */
+  --accent-2: #7a3bff; /* segundo color para gradiente */
+  --dark: #222;
+
+  /* dimensiones base: se usan con clamp() para escalado fluido */
+  --gap: 20px;
+  --max-width: 1200px; /* ancho máximo del carrusel */
+
+  /* Altura preferida: usamos unidades relativas a la anchura para mantener aspect-ratio */
+  --carousel-aspect: 2.8; /* ancho / alto aproximado (ej: 1200 / 430 ≈ 2.79) */
+  /* Valor final de altura en px será calculado en reglas siguientes usando aspect-ratio */
+}
+
+/* Reset básico de body */
+body{
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #fff;
+}
+
+/* Contenedor principal del carrusel */
+.carousel{
+  position: relative;
+  overflow: hidden;                /* recorta las imágenes fuera del área */
+  max-width: 90vw;
+  margin: 20px auto;
+  border-radius: 6px;
+  /* Usamos aspect-ratio para controlar la altura de forma proporcional al ancho */
+  aspect-ratio: var(--carousel-aspect);
+  background: #f6f6f6;
+}
+
+/* Pista que contiene los slides. Se mueve con transform desde JS */
+.carousel__track{
+  display: flex;
+  height: 100%;
+  transition: transform 0.6s ease;
+  will-change: transform;
+}
+
+/* Cada slide ocupa el 100% del ancho del contenedor */
+.carousel__slide{
+  min-width: 100%;
+  position: relative;
+}
+
+/* Imagen: ocupan todo el contenedor y se recortan si es necesario */
+.carousel__slide img{
+  width: 100%;
+  height: 100%;              /* con aspect-ratio en el padre esto mantiene la proporción */
+  object-fit: cover;         /* cubre el área recortando si es necesario */
+  display: block;
+}
+
+/* Contenido superpuesto (texto, CTA) */
+.carousel__content{
+  position: absolute;
+  left: clamp(12px, 4vw, 48px);  /* se adapta según la anchura */
+  top: clamp(12px, 4vh, 60px);
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.45);
+  max-width: 55%;                /* evita que el texto ocupe todo el ancho en pantallas grandes */
+}
+
+.carousel__content h1{
+  margin: 6px 0;
+  /* tamaño de fuente fluido: entre 22px y 56px según el viewport */
+  font-size: clamp(22px, 4.5vw, 56px);
+  line-height: 1.05;
+}
+
+.carousel__content h2{
+  margin: 0 0 6px 0;
+  font-size: clamp(12px, 2.2vw, 20px);
+  font-weight: 600;
+}
+
+.btn-cta{
+  display: inline-block;
+  margin-top: 12px;
+  padding: clamp(8px, 1.2vw, 14px) clamp(14px, 2.4vw, 28px);
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  color: #fff;
+  border-radius: 28px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+/* Flechas de navegación */
+.carousel__arrow{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.85);
+  border: 0;
+  width: clamp(40px, 4.5vw, 64px);
+  height: clamp(56px, 7vw, 96px);
+  font-size: clamp(20px, 3.2vw, 36px);
+  cursor: pointer;
+  color: var(--dark);
+  z-index: 5;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+}
+.carousel__arrow--left{ left: clamp(8px, 2vw, 18px); }
+.carousel__arrow--right{ right: clamp(8px, 2vw, 18px); }
+
+/* Indicadores (puntos) */
+.carousel__dots{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: clamp(8px, 2vh, 18px);
+  display: flex;
+  gap: 8px;
+  z-index: 6;
+}
+.carousel__dot{
+  width: clamp(8px, 1.2vw, 12px);
+  height: clamp(8px, 1.2vw, 12px);
+  border-radius: 50%;
+  background: rgba(255,255,255,0.75);
+  border: 0;
+  cursor: pointer;
+}
+.carousel__dot.active{ background: var(--accent); }
+
+/* Pequeñas adaptaciones por breakpoint (solo cuando sea necesario) */
+@media (max-width: 900px){
+  /* Reducimos el ancho máximo del contenido para dispositivos medianos */
+  .carousel__content{ max-width: 65%; }
+}
+
+@media (max-width: 480px){
+  /* En móviles muy estrechos, colocamos el texto más pequeño y el CTA más compacto */
+  .carousel__content{ max-width: 85%; }
+  .carousel__content h1{ font-size: clamp(18px, 6.5vw, 32px); }
+  .btn-cta{ padding: 8px 12px; font-size: 14px; }
+}
+
+/* Nota: si prefieres una altura fija en lugar de aspect-ratio, puedes desactivar
+   aspect-ratio en .carousel y usar .carousel { height: clamp(280px, 35vh, 480px); } */

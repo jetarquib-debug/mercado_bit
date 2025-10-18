@@ -11,6 +11,8 @@
 
     <!-- Bloque extra para CSS específico de cada página -->
     {% block css %}
+        <!-- CSS del carrusel de promociones -->
+        <link rel="stylesheet" href="{% static 'promociones/carousel.css' %}">
     {% endblock css %}
 </head>
 
@@ -18,7 +20,7 @@
 <div class="general">
     <header class="header_contenedor">
         <div class="logo">
-            <a href="{% url 'home' %}"><h1>Linio</h1></a>
+            <a href="{% url 'home' %}"><img src="{% static 'logo/logo.ico' %}"></a>
         </div>
 
         <div class="categorias">
@@ -47,11 +49,10 @@
     <div class="header_contenedor_secundario">
         <a href="{% url 'registrar_usuario_tienda:registro_tienda' %}#registro">Como vendedor</a>
     </div>
-
     <!-- 🔹 Bloque para el contenido dinámico -->
     {% block content %}
+        {% include "promociones/promociones_carousel.html" %}
     {% endblock content %}
-
 </div>
 {% block js %}{% endblock js %}
 

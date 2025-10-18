@@ -1,0 +1,54 @@
+{% load static %}
+
+{% block css%}
+<link rel="stylesheet" href="{% static 'promociones/carousel.css' %}">
+{% endblock css %}
+<div class="carousel" id="promocionesCarousel">
+    <button class="carousel__arrow carousel__arrow--left" data-action="prev" aria-label="Anterior">‹</button>
+
+    <div class="carousel__track">
+    {% if promociones and promociones|length > 0 %}
+        {% for promo in promociones %}
+        <div class="carousel__slide {% if forloop.first %}active{% endif %}">
+            {% if promo.imagen_url %}
+            <img src="{{ promo.imagen_url }}" alt="Promoción {{ forloop.counter }}">
+            {% elif promo.imagen_promocion and promo.imagen_promocion.url %}
+            <img src="{{ promo.imagen_promocion.url }}" alt="Promoción {{ forloop.counter }}">
+            {% else %}
+            <img src="{% static 'promociones/default.png' %}" alt="Promoción {{ forloop.counter }}">
+            {% endif %}
+
+            <div class="carousel__content">
+            {% if promo.descripcion %}
+                <h2>{{ promo.descripcion }}</h2>
+            {% endif %}
+            <h1>{% if promo.descuento_porcentaje %}{{ promo.descuento_porcentaje }}% OFF{% else %}Promoción{% endif %}</h1>
+            <a class="btn-cta" href="#">VER PROMOCIÓN</a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="carousel__slide active">
+        <img src="{% static 'promociones/default.png' %}" alt="Sin promociones">
+        <div class="carousel__content">
+            <h2>No hay promociones activas</h2>
+            <h1>Vuelve pronto</h1>
+        </div>
+        </div>
+    {% endif %}
+    </div>
+
+    <button class="carousel__arrow carousel__arrow--right" data-action="next" aria-label="Siguiente">›</button>
+
+    <div class="carousel__dots" role="tablist">
+    {% if promociones and promociones|length > 0 %}
+        {% for promo in promociones %}
+        <button class="carousel__dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}" aria-label="Ir al slide {{ forloop.counter }}"></button>
+        {% endfor %}
+    {% else %}
+        <button class="carousel__dot active" data-index="0" aria-label="Sin slides"></button>
+    {% endif %}
+    </div>
+</div>
+
+<script src="{% static 'promociones/carousel.js' %}"></script>
