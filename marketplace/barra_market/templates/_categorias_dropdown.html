@@ -1,0 +1,44 @@
+{% load static %}
+<div id="categorias-panel" class="categorias-panel" aria-hidden="true">
+  <div class="categorias-panel__backdrop" data-close></div>
+  <div class="categorias-panel__inner">
+    <div class="categorias-panel__left">
+      <h3 class="categorias-panel__title">Categorías</h3>
+      <ul class="categorias-list">
+        {% if categorias %}
+          {% for cat in categorias %}
+            <li class="categorias-list__item"><a href="#">{{ cat.nomb_ca }}</a></li>
+          {% endfor %}
+        {% else %}
+          <li class="categorias-list__item">(No hay categorías)</li>
+        {% endif %}
+      </ul>
+    </div>
+    <div class="categorias-panel__right">
+      <div class="categorias-panel__col">
+        <h4>Oportunidades Únicas</h4>
+        <ul class="mini-list">
+          <li>Tecnología</li>
+          <li>Electrohogar</li>
+          <li>Moda</li>
+        </ul>
+      </div>
+      <div class="categorias-panel__col">
+        <h4>Marcas</h4>
+        <ul class="marcas-list">
+          {% if marcas %}
+            {% for m in marcas %}
+              <li class="marcas-list__item"><a href="#">{{ m.nomb_marca }}</a></li>
+            {% endfor %}
+          {% else %}
+            <li>(No hay marcas)</li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  <button class="categorias-panel__close" aria-label="Cerrar" data-close>×</button>
+</div>
+{% block extra_js %}
+    <script src="{% static 'barra_market/categorias_panel.js' %}"></script>
+{% endblock extra_js %}

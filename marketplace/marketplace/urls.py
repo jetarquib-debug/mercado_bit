@@ -24,6 +24,7 @@ urlpatterns = [
     path('registrar/', include('registrar_usuario_tienda.urls')),
     path('', include('barra_market.urls')),
     path('promociones/', include('promociones.urls')),
+    path('inicio_sesion/', include('inicio_sesion.urls')),
 ]
 
 if settings.DEBUG:

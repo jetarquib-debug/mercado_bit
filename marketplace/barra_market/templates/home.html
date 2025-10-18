@@ -13,6 +13,8 @@
     {% block css %}
         <!-- CSS del carrusel de promociones -->
         <link rel="stylesheet" href="{% static 'promociones/carousel.css' %}">
+        <link rel="stylesheet" href="{% static 'barra_market/marcas_grid.css' %}">
+        <link rel="stylesheet" href="{% static 'barra_market/categorias_panel.css' %}">
     {% endblock css %}
 </head>
 
@@ -34,8 +36,17 @@
             </div>
         </div>
 
-        <div class="registro">
-            <a href="{% url 'registrar_usuario_tienda:registro_usuario' %}#registro">Registrar</a>
+        <div class="registro dropdown-login">
+            <a href="#" class="dropdown-toggle">Hola, <span class="small">Inicia sesión ▾</span></a>
+            <div class="dropdown-menu">
+                <ul>
+                    <li><a href="{% url 'inicio_sesion:login' %}">Inicia sesión</a></li>
+                    <li><a href="{% url 'registrar_usuario_tienda:registro_usuario' %}#registro">Regístrate</a></li>
+                    <li><a href="#">Mi cuenta</a></li>
+                    <li class="divider" aria-hidden="true"></li>
+                    <li class="cmr"><a href="#">-----</a></li>
+                </ul>
+            </div>
         </div>
 
         <div class="compras">
@@ -45,16 +56,43 @@
             <a href="#">🛒</a>
         </div>
     </header>
-
     <div class="header_contenedor_secundario">
         <a href="{% url 'registrar_usuario_tienda:registro_tienda' %}#registro">Como vendedor</a>
     </div>
     <!-- 🔹 Bloque para el contenido dinámico -->
     {% block content %}
         {% include "promociones/promociones_carousel.html" %}
+        {% include "_categorias_grid.html" %}
+        {% include "_marcas_grid.html" %}
     {% endblock content %}
 </div>
-{% block js %}{% endblock js %}
+{% block js %}
+<script>
+    (function(){
+        const toggle = document.querySelector('.dropdown-login .dropdown-toggle');
+        const container = document.querySelector('.dropdown-login');
+        if(!toggle || !container) return;
 
+        // Evitar que el enlace navegue
+        toggle.addEventListener('click', function(ev){
+            ev.preventDefault();
+            container.classList.toggle('open');
+        });
+
+        // Cerrar al hacer click fuera
+        document.addEventListener('click', function(ev){
+            if (!container.contains(ev.target)) {
+                container.classList.remove('open');
+            }
+        });
+
+        // Evitar que al hacer click dentro del dropdown se cierre automáticamente
+        const menu = container.querySelector('.dropdown-menu');
+        if (menu) {
+            menu.addEventListener('click', function(ev){ ev.stopPropagation(); });
+        }
+    })();
+</script>
+{% endblock js %}
 </body>
 </html>

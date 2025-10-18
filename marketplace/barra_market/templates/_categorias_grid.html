@@ -1,0 +1,9 @@
+{% load static %}
+<section class="categorias-grid">
+  <h2 class="categorias-grid__title">Lo mejor en tecnología</h2>
+  <div class="categorias-grid__list">
+    {% for cat in categorias %}
+      <button class="categoria-btn" type="button">{{ cat.nomb_ca }}</button>
+    {% endfor %}
+  </div>
+</section>

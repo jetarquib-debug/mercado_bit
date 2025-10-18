@@ -1,0 +1,38 @@
+{% extends "home.html" %}
+{% load static %}
+{% block css%}
+<link rel="stylesheet" href="{% static 'iniciar_sesion.css' %}">
+{% endblock css %}
+{% block content %}
+    <div class="login-container">
+    <div class="container registro-usuario-form">
+        <h2>Iniciar sesión</h2>
+        <form method="post" action="{% url 'inicio_sesion:login' %}" class="registro-usuario-form">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="error-messages">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="input-group">
+            <label for="id_username">Usuario o email</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+            <div class="field-error">{{ form.username.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="input-group">
+            <label for="id_password">Contraseña</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+            <div class="field-error">{{ form.password.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="actions-row">
+            <button type="submit" class="btn">Entrar</button>
+        </div>
+        </form>
+    </div>
+    </div>
+{% endblock content %}

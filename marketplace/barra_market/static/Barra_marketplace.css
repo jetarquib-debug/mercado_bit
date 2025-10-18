@@ -65,6 +65,11 @@
     align-items: center;
     padding-left: 2vw;
 }
+
+/* Contenedor relativo para el dropdown de login */
+.registro.dropdown-login{
+    position: relative;
+}
 .registro a {
     color: white;
     text-decoration: none;
@@ -95,22 +100,107 @@
 }
 .header_contenedor_secundario {
     display: flex;
-    background: linear-gradient(135deg, #ffffff, #575353);
+    background: linear-gradient(135deg, rgb(53, 52, 52), rgb(124, 123, 123));
     height: 3vh;
     width: 100vw;
     padding-left: 1vw;
     align-items: center;
 }
 .header_contenedor_secundario a{
+    color: white;
     text-decoration: none;
     font-size: 1vw;
+    margin-right: 2vw;
+}
+
+/* Estilos para el grid de categorías mostrado en home */
+.categorias-grid{
+    padding: 3vh 5vw;
+}
+.categorias-grid__title{
+    text-align: center;
+    margin-bottom: 28px;
+    font-size: 3vh;
+    color: #27323a;
+}
+.categorias-grid__list{
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(120px, 1fr));
+    gap: 22px 36px;
+    align-items: center;
+}
+.categoria-btn{
+    background: transparent;
+    border: none;
+    color: #2f3b45;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: clamp(12px, 1.2vw, 16px);
+}
+
+@media (max-width: 900px){
+    .categorias-grid__list{ grid-template-columns: repeat(3, minmax(120px, 1fr)); gap: 18px; }
+}
+@media (max-width: 480px){
+    .categorias-grid__list{ grid-template-columns: repeat(2, minmax(100px, 1fr)); gap: 12px; }
+    .categoria-btn{ padding: 8px 10px; }
 }
 .general{
-    background-image: url('https://img.freepik.com/vector-gratis/fondo-abstracto-blanco-forma-diamante_52683-56093.jpg?semt=ais_hybrid&w=740&q=80');
-    width: auto;
+    background-image: url('https://wallpapers.com/images/hd/white-pc-wo5wzl0cxtx52d1e.jpg');
+    width: 100vw;
     height: 100vh;
     background-repeat: no-repeat;
-    background-size: 100%;
+    background-size: cover;
     background-attachment: fixed;
-    background-position: right;
+    overflow: auto;
+}
+
+/* ===== Dropdown de registro/inicio de sesión ===== */
+.dropdown-login .dropdown-toggle{
+    color: white;
+    text-decoration: none;
+    font-size: 1.5vw;
+    cursor: pointer;
+    display: inline-block;
+}
+.dropdown-login .dropdown-menu{
+    position: absolute;
+    top: 110%;
+    right: 0;
+    background: white;
+    min-width: 200px;
+    border-radius: 6px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+    padding: 1vh 0;
+    display: none;
+    z-index: 50;
+}
+.dropdown-login.open .dropdown-menu{
+    display: block;
+}
+.dropdown-login .dropdown-menu ul{
+    list-style: none;
+}
+.dropdown-login .dropdown-menu li{
+    padding: 8px 18px;
+}
+.dropdown-login .dropdown-menu li a{
+    color: #333;
+    text-decoration: none;
+    display: block;
+    font-size: 0.95rem;
+}
+.dropdown-login .dropdown-menu li a:hover{
+    background: #f5f5f5;
+}
+.dropdown-login .dropdown-menu .divider{
+    height: 1px;
+    background: #eee;
+    margin: 8px 0;
+}
+.dropdown-login .dropdown-menu .cmr{
+    font-size: 0.9rem;
 }
