@@ -1,0 +1,110 @@
+
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}Perfil Tienda{% endblock title %}
+{% block css %}
+	<link rel="stylesheet" href="{% static 'perfil_tienda.css' %}">
+{% endblock css %}
+
+{% block content %}
+
+	{# Banner: imagen y nombre de la tienda (si existe) #}
+	<header class="tienda-banner">
+		{% if tienda %}
+			<div class="tienda-banner-left">
+				<img src="{{ tienda.imagen_principal|default:'/media/tienda/default.png' }}" alt="{{ tienda.nombre_tienda }}" class="tienda-banner-img" />
+				<div class="tienda-banner-meta">
+					<h1 class="tienda-nombre">{{ tienda.nombre_tienda }}</h1>
+					{% if tienda.descripcion %}<p class="tienda-descripcion">{{ tienda.descripcion }}</p>{% endif %}
+				</div>
+			</div>
+			<div class="tienda-banner-right">
+				{# Menú usuario (si existe) #}
+				<div class="tienda-login dropdown-login">
+			{% if usuario_profile %}
+				<a href="#" class="dropdown-toggle user-toggle">
+					<img src="{{ usuario_profile.imagen_principal|default:'/media/usuario/default.png' }}" alt="avatar" class="user-avatar" />
+					<span class="user-name">{{ usuario_profile.nombres|default:usuario_profile.email }}</span>
+					<span class="small">▾</span>
+				</a>
+				<div class="dropdown-menu">
+					<ul>
+						<li class="profile-header">
+							<img src="{{ usuario_profile.imagen_principal|default:'/media/usuario/default.png' }}" alt="avatar" class="user-avatar-large" />
+							<div class="profile-info">
+								<strong>{{ usuario_profile.nombres }} {{ usuario_profile.apellidos }}</strong><br/>
+								<small>{{ usuario_profile.email }}</small>
+							</div>
+						</li>
+						<li><a href="{% url 'usuario:perfil' %}">Ver perfil</a></li>
+						<li><a href="{% url 'inicio_sesion:logout' %}">Cerrar sesión</a></li>
+					</ul>
+				</div>
+
+				{% else %}
+					<a href="{% url 'inicio_sesion:login' %}" class="dropdown-toggle">Hola, <span class="small">Inicia sesión ▾</span></a>
+				{% endif %}
+				</div>
+			</div>
+		{% else %}
+			<div class="tienda-banner-left">
+				<h1>Perfil de la tienda</h1>
+			</div>
+		{% endif %}
+	</header>
+
+	<main class="tienda-main">
+		{% if tienda %}
+			<section class="tienda-info">
+				<h2>Información</h2>
+				<ul>
+					<li><strong>Nombre:</strong> {{ tienda.nombre_tienda }}</li>
+					{% if tienda.descripcion %}<li><strong>Descripción:</strong> {{ tienda.descripcion }}</li>{% endif %}
+					{% if tienda.email %}<li><strong>Email:</strong> <a href="mailto:{{ tienda.email }}">{{ tienda.email }}</a></li>{% endif %}
+					{% if tienda.telefono %}<li><strong>Teléfono:</strong> {{ tienda.telefono }}</li>{% endif %}
+					{% if tienda.direccion %}<li><strong>Dirección:</strong> {{ tienda.direccion }}</li>{% endif %}
+					{% if tienda.ubicacion_completa %}<li><strong>Ubicación:</strong> {{ tienda.ubicacion_completa }}</li>{% endif %}
+				</ul>
+			</section>
+
+			<section class="tienda-propietario">
+				<h2>Propietario</h2>
+				<p>
+					{% if tienda.usuario %}
+						<strong>{{ tienda.usuario.nombres }} {{ tienda.usuario.apellidos }}</strong><br>
+						<small>{{ tienda.usuario.email }}</small>
+					{% else %}
+						<em>No hay propietario asignado.</em>
+					{% endif %}
+				</p>
+			</section>
+		{% else %}
+			<h2>Sin tienda seleccionada</h2>
+			<p>Aquí se mostrará la información de la tienda cuando esté disponible.</p>
+		{% endif %}
+	</main>
+
+	<script>
+		(function(){
+			const toggle = document.querySelector('.tienda-login .dropdown-toggle');
+			const container = document.querySelector('.tienda-login');
+			if(!toggle || !container) return;
+
+			toggle.addEventListener('click', function(ev){
+				ev.preventDefault();
+				container.classList.toggle('open');
+			});
+
+			document.addEventListener('click', function(ev){
+				if (!container.contains(ev.target)) {
+					container.classList.remove('open');
+				}
+			});
+
+			const menu = container.querySelector('.dropdown-menu');
+			if (menu) menu.addEventListener('click', function(ev){ ev.stopPropagation(); });
+		})();
+	</script>
+
+{% endblock content %}

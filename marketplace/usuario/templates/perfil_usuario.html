@@ -1,10 +1,11 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="utf-8">
-    <title>Perfil de usuario</title>
-</head>
-<body>
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}Perfil de usuario</title>{% endblock title %}
+{% block css%}
+  <link rel="stylesheet" href="{% static 'perfil_usuario.css' %}">
+{% endblock css %}
+{% block content %}
     <h1>Perfil de {{ usuario.nombres }} {{ usuario.apellidos }}</h1>
 
     <div>
@@ -19,5 +20,4 @@
 
     <p><a href="{% url 'inicio_sesion:logout' %}">Cerrar sesión</a></p>
     <p><a href="/">Volver al inicio</a></p>
-</body>
-</html>
+{% endblock content %}

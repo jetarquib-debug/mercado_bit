@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password
 from usuario.models import Usuario
+from tienda.models import Tienda
 from .forms import LoginUsuarioForm
 
 
@@ -19,6 +20,12 @@ def login_usuario(request):
 				return render(request, "inicio_sesion/iniciar_sesion.html", {"form": form})
 
 			if check_password(contrasena, usuario.contrasena):
+				# Si el usuario ya posee una tienda, redirigir al perfil de su tienda
+				tienda = Tienda.objects.filter(usuario=usuario).first()
+				if tienda:
+					# Redirigir al perfil de la tienda (ruta con pk)
+					return redirect('tienda:perfil_pk', pk=tienda.pk)
+
 				request.session["usuario_id"] = usuario.id
 				request.session["usuario_nombre"] = usuario.nombres
 				messages.success(request, f"Bienvenido, {usuario.nombres} 👋")

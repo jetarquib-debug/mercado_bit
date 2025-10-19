@@ -37,16 +37,63 @@
         </div>
 
         <div class="registro dropdown-login">
-            <a href="#" class="dropdown-toggle">Hola, <span class="small">Inicia sesión ▾</span></a>
-            <div class="dropdown-menu">
-                <ul>
-                    <li><a href="{% url 'inicio_sesion:login' %}">Inicia sesión</a></li>
-                    <li><a href="{% url 'registrar_usuario_tienda:registro_usuario' %}#registro">Regístrate</a></li>
-                    <li><a href="#">Mi cuenta</a></li>
-                    <li class="divider" aria-hidden="true"></li>
-                    <li class="cmr"><a href="#">-----</a></li>
-                </ul>
-            </div>
+            {# Si estamos en la página de una tienda, mostrar su avatar y menú en la barra #}
+            {% if tienda %}
+                <a href="#" class="dropdown-toggle user-toggle">
+                    <img src="{{ tienda.imagen_principal|default:'/media/tienda/default.png' }}" alt="avatar-tienda" class="tienda-avatar user-avatar" />
+                    <span class="user-name">{{ tienda.nombre_tienda }}</span>
+                    <span class="small">▾</span>
+                </a>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li class="profile-header">
+                            <img src="{{ tienda.imagen_principal|default:'/media/tienda/default.png' }}" alt="avatar-tienda" class="user-avatar-large" />
+                            <div class="profile-info">
+                                <strong>{{ tienda.nombre_tienda }}</strong><br/>
+                                <small>{{ tienda.email }}</small>
+                            </div>
+                        </li>
+                        <li><a href="{% url 'tienda:perfil_pk' pk=tienda.pk %}">Ver tienda</a></li>
+                        <li><a href="{% url 'inicio_sesion:logout' %}">Cerrar sesión</a></li>
+                        <li class="divider" aria-hidden="true"></li>
+                    </ul>
+                </div>
+            {% elif usuario_profile %}
+                {# Mostrar avatar y nombre con dropdown similar a la imagen adjunta #}
+                <a href="#" class="dropdown-toggle user-toggle">
+                    <img src="{{ usuario_profile.imagen_principal|default:'/media/usuario/default.png' }}" alt="avatar" class="user-avatar" />
+                    <span class="user-name">{{ usuario_profile.nombres|default:usuario_profile.email }}</span>
+                    <span class="small">▾</span>
+                </a>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li class="profile-header">
+                            <img src="{{ usuario_profile.imagen_principal|default:'/media/usuario/default.png' }}" alt="avatar" class="user-avatar-large" />
+                            <div class="profile-info">
+                                <strong>{{ usuario_profile.nombres }} {{ usuario_profile.apellidos }}</strong><br/>
+                                <small>{{ usuario_profile.email }}</small>
+                            </div>
+                        </li>
+                        <li><a href="{% url 'usuario:perfil' %}">Ver perfil</a></li>
+                        <li><a href="{% url 'inicio_sesion:logout' %}">Cerrar sesión</a></li>
+                        <li class="divider" aria-hidden="true"></li>
+                    </ul>
+                </div>
+            {% else %}
+                <a href="#" class="dropdown-toggle">Hola, <span class="small">Inicia sesión ▾</span></a>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li class="divider" aria-hidden="true"></li>
+                        <li><a href="{% url 'inicio_sesion:login' %}">Inicia sesión como usuario</a></li>
+                        <li><a href="#">Inicia sesión con tienda</a></li>
+                        <li class="divider" aria-hidden="true"></li>
+                        <li><a href="{% url 'registrar_usuario_tienda:registro_usuario' %}#registro">Regístrate como usuario</a></li>
+                        <li><a href="{% url 'registrar_usuario_tienda:registro_tienda' %}#registro">Regístrate con tienda</a></li>
+                        <li class="divider" aria-hidden="true"></li>
+                        <li class="cmr"><a href="#">-----</a></li>
+                    </ul>
+                </div>
+            {% endif %}
         </div>
 
         <div class="compras">
@@ -57,7 +104,6 @@
         </div>
     </header>
     <div class="header_contenedor_secundario">
-        <a href="{% url 'registrar_usuario_tienda:registro_tienda' %}#registro">Como vendedor</a>
     </div>
     <!-- 🔹 Bloque para el contenido dinámico -->
     {% block content %}

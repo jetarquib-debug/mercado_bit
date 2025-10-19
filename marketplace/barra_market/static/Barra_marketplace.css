@@ -166,6 +166,13 @@
     cursor: pointer;
     display: inline-block;
 }
+.tienda-avatar{
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.9);
+}
 .dropdown-login .dropdown-menu{
     position: absolute;
     top: 110%;
@@ -203,4 +210,63 @@
 }
 .dropdown-login .dropdown-menu .cmr{
     font-size: 0.9rem;
+}
+
+/* Estilos para avatar y cabecera del dropdown cuando hay usuario autenticado */
+.dropdown-login .dropdown-toggle.user-toggle{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.dropdown-login .user-avatar{
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.85);
+}
+.dropdown-login .user-name{
+    font-size: 1.1vw;
+    color: white;
+}
+.dropdown-login .profile-header{
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 12px 18px;
+    border-bottom: 1px solid #eee;
+}
+.dropdown-login .user-avatar-large{
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.dropdown-login .profile-info{
+    font-size: 0.95rem;
+    color: #333;
+}
+
+/* Estilos específicos para el dropdown de tienda (tarjeta blanca con avatar grande) */
+.dropdown-login .tienda-card{
+    min-width: 240px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.dropdown-login .tienda-card .profile-header{
+    padding: 14px 16px;
+}
+.dropdown-login .tienda-avatar-large{
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #e9e9e9;
+    display: block;
+}
+.dropdown-login .tienda-card .profile-header .profile-info{ display:block; }
+.dropdown-login .tienda-card .profile-header img{ margin-right: 10px; }
+.dropdown-login .tienda-nombre{
+    font-weight: 700;
+    font-size: 1rem;
 }

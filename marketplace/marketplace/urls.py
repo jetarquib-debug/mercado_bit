@@ -26,6 +26,7 @@ urlpatterns = [
     path('promociones/', include('promociones.urls')),
     path('inicio_sesion/', include('inicio_sesion.urls')),
     path('usuario/', include('usuario.urls')),
+    path('tienda/', include('tienda.urls')),
 ]
 
 if settings.DEBUG:

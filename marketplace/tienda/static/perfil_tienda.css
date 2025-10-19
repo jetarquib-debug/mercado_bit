@@ -1,0 +1,27 @@
+/* Estilos básicos para la página de perfil de tienda */
+.tienda-header{
+	display:flex;
+	align-items:center;
+	justify-content:space-between;
+	padding:12px 20px;
+	background: linear-gradient(135deg, #8133cf, #d63384);
+	color: white;
+}
+.tienda-header .logo a{ color: white; text-decoration:none; font-weight:700; font-size:1.2rem; }
+.tienda-main{ padding:24px; }
+
+/* Reutiliza clases similares al header global para el dropdown de usuario */
+.dropdown-login{ position: relative; }
+.dropdown-login .dropdown-toggle{ color: white; text-decoration:none; cursor:pointer; display:inline-block; }
+.dropdown-login .dropdown-menu{ position:absolute; top:110%; right:0; background:white; min-width:220px; border-radius:6px; box-shadow:0 8px 16px rgba(0,0,0,0.12); padding:8px 0; display:none; z-index:50; }
+.dropdown-login.open .dropdown-menu{ display:block; }
+.dropdown-login .dropdown-menu ul{ list-style:none; margin:0; padding:0; }
+.dropdown-login .dropdown-menu li{ padding:8px 16px; }
+.dropdown-login .dropdown-menu li a{ color:#333; text-decoration:none; display:block; }
+
+.user-toggle{ display:flex; align-items:center; gap:0.6rem; }
+.user-avatar{ width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.9); }
+.user-avatar-large{ width:60px; height:60px; border-radius:8px; object-fit:cover; }
+.profile-header{ display:flex; gap:0.6rem; align-items:center; padding:8px 12px; border-bottom:1px solid #eee; }
+.profile-info{ color:#333; font-size:0.95rem; }
+
