@@ -11,9 +11,7 @@
 
     <!-- Bloque extra para CSS específico de cada página -->
     {% block css %}
-        <!-- CSS del carrusel de promociones -->
         <link rel="stylesheet" href="{% static 'promociones/carousel.css' %}">
-        <link rel="stylesheet" href="{% static 'barra_market/marcas_grid.css' %}">
         <link rel="stylesheet" href="{% static 'barra_market/categorias_panel.css' %}">
     {% endblock css %}
 </head>
@@ -26,14 +24,14 @@
         </div>
 
         <div class="categorias">
-            <button id="categorias">Categorías▲</button>
+            <button id="categorias" class="categorias-toggle">Categorías <span class="arrow">▾</span></button>
         </div>
 
         <div>
-            <div class="search-bar">
-                <input type="text" placeholder="Buscar en Linio">
-                <button>Buscar</button>
-            </div>
+            <form class="search-bar" method="get" action="{% url 'producto:lista' %}">
+                <input type="search" name="q" placeholder="Buscar en Mercado BIT" aria-label="Buscar productos">
+                <button type="submit">Buscar</button>
+            </form>
         </div>
 
         <div class="registro dropdown-login">
@@ -100,15 +98,26 @@
             <a href="#">Mis compras</a>
         </div>
         <div class="carrito">
-            <a href="#">🛒</a>
+            <a href="{% url 'carrito:ver' %}">🛒 <span id="cart-count" style="display:none; background:#ff3b30; color:#fff; padding:0 6px; border-radius:999px; font-size:0.85rem; margin-left:6px;">0</span></a>
         </div>
     </header>
+    
     <div class="header_contenedor_secundario">
     </div>
+    {% include "_categorias_dropdown.html" %}
     <!-- 🔹 Bloque para el contenido dinámico -->
     {% block content %}
+        <div class="texto_comercial">
+            <p >Nuestras promociones te esperan.</p>
+        </div>
         {% include "promociones/promociones_carousel.html" %}
+        <div class="texto_comercial" style="margin-top:20vh; margin-bottom:2vh;">
+            <p >Lo mejor de la tecnologia a tu alcanze.</p>
+        </div>
         {% include "_categorias_grid.html" %}
+        <div class="texto_comercial" style="margin-top:30vh; margin-bottom:5vh;">
+            <p >Colaboradores destacados.</p>
+        </div>
         {% include "_marcas_grid.html" %}
     {% endblock content %}
 </div>
@@ -140,5 +149,8 @@
     })();
 </script>
 {% endblock js %}
+
+    <!-- Cargar carrito.js globalmente (siempre disponible) -->
+    <script src="{% static 'carrito/carrito.js' %}"></script>
 </body>
 </html>

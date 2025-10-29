@@ -1,0 +1,64 @@
+/* Estilos modernos para la ficha de producto */
+:root{
+  --bg: #ffffff;
+  --muted: #6b7280;
+  --accent: #0b7cff;
+  --card-shadow: 0 10px 30px rgba(2,6,23,0.08);
+}
+
+.detalle-producto{
+  display:flex;
+  gap:2.5rem;
+  align-items:flex-start;
+  padding:2rem 0;
+  max-width:1200px;
+  margin:0 auto;
+}
+
+.detalle-imagenes{ width:48%; }
+.detalle-imagenes .principal{
+  width:100%;
+  border-radius:12px;
+  box-shadow:var(--card-shadow);
+  object-fit:cover;
+  display:block;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1), opacity .25s ease;
+  cursor: zoom-in;
+}
+.detalle-imagenes .principal.fade-out{ opacity:0; transform:scale(.995); }
+
+.thumbnails{ display:flex; gap:0.6rem; margin-top:0.9rem; }
+.thumbnails img{
+  width:72px; height:72px; object-fit:cover; border-radius:8px; cursor:pointer;
+  border:1px solid #eee; box-shadow:0 6px 18px rgba(2,6,23,0.04);
+  transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+}
+.thumbnails img:hover{ transform:translateY(-6px) scale(1.03); box-shadow:0 14px 34px rgba(2,6,23,0.12); }
+
+.detalle-info{ width:52%; }
+.detalle-info h1{ margin:0 0 0.5rem 0; font-size:2rem; line-height:1.05; }
+.precio{ font-size:1.6rem; font-weight:800; color:#111827; margin:0.5rem 0; }
+.stock{ margin:0.5rem 0; color:var(--muted); }
+.descripcion{ margin:1rem 0; color:#374151; font-size:1rem; }
+
+.categorias-list{ display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.5rem; }
+.categoria-pill{ padding:0.35rem 0.6rem; background:#f8fafc; border-radius:999px; font-size:0.9rem; color:#111827; border:1px solid #eef2f7; }
+
+.btn-comprar{ display:inline-block; padding:0.7rem 1.1rem; background:linear-gradient(180deg,var(--accent),#0066d6); color:#fff; border-radius:10px; text-decoration:none; box-shadow:0 10px 30px rgba(11,124,255,0.18); transition: transform .12s ease, box-shadow .12s ease; }
+.btn-comprar:hover{ transform:translateY(-4px); box-shadow:0 18px 46px rgba(11,124,255,0.22); }
+
+/* Lightbox modal */
+.pd-lightbox{ position:fixed; inset:0; background:rgba(4,6,12,0.6); display:flex; align-items:center; justify-content:center; z-index:9999; opacity:0; pointer-events:none; transition:opacity .18s ease; }
+.pd-lightbox.open{ opacity:1; pointer-events:auto; }
+.pd-lightbox img{ max-width:90%; max-height:90%; border-radius:10px; box-shadow:0 40px 80px rgba(2,6,23,0.6); }
+
+/* Responsive */
+@media (max-width: 900px){
+  .detalle-producto{ flex-direction:column; }
+  .detalle-imagenes, .detalle-info{ width:100%; }
+  .thumbnails img{ width:64px; height:64px; }
+}
+
+/* Small niceties */
+.producto-tienda a{ color:var(--accent); text-decoration:none; }
+.producto-tienda a:hover{ text-decoration:underline; }

@@ -1,6 +1,8 @@
 {% load static %}
+{% block css%}
+  <link rel="stylesheet" href="{% static 'barra_market/marcas_grid.css' %}">
+{% endblock css %}
 <section class="marcas-grid marcas-slider">
-  <h2 class="marcas-grid__title">Marcas destacadas</h2>
 
   <div class="marcas-slider__wrap">
     <button class="marcas-btn marcas-prev" aria-label="Anterior">◀</button>
@@ -10,11 +12,19 @@
         <div class="marca-slide">
           <div class="marca-slide__card">
               {% if marca.imagen_marca and marca.imagen_marca.url %}
-                <a class="marca-link" href="#" aria-label="{{ marca.nomb_marca }}">
+                {% if query %}
+                  <a class="marca-link" href="{% url 'producto:lista' %}?q={{ query|urlencode }}&marca={{ marca.pk }}" aria-label="{{ marca.nomb_marca }}">
+                {% else %}
+                  <a class="marca-link" href="{% url 'producto:lista' %}?marca={{ marca.pk }}" aria-label="{{ marca.nomb_marca }}">
+                {% endif %}
                   <img src="{{ marca.imagen_marca.url }}" alt="{{ marca.nomb_marca }}" class="marca-slide__img">
                 </a>
               {% else %}
-                <a class="marca-link" href="#" aria-label="{{ marca.nomb_marca }}">
+                {% if query %}
+                  <a class="marca-link" href="{% url 'producto:lista' %}?q={{ query|urlencode }}&marca={{ marca.pk }}" aria-label="{{ marca.nomb_marca }}">
+                {% else %}
+                  <a class="marca-link" href="{% url 'producto:lista' %}?marca={{ marca.pk }}" aria-label="{{ marca.nomb_marca }}">
+                {% endif %}
                   <img src="{% static 'marcas_imagenes/default_marca.png' %}" alt="{{ marca.nomb_marca }}" class="marca-slide__img">
                 </a>
               {% endif %}

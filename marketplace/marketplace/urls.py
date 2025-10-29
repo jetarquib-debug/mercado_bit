@@ -24,6 +24,8 @@ urlpatterns = [
     path('registrar/', include('registrar_usuario_tienda.urls')),
     path('', include('barra_market.urls')),
     path('promociones/', include('promociones.urls')),
+    path('producto/', include('producto.urls')),
+    path('carrito/', include('carrito.urls')),
     path('inicio_sesion/', include('inicio_sesion.urls')),
     path('usuario/', include('usuario.urls')),
     path('tienda/', include('tienda.urls')),

@@ -1,0 +1,36 @@
+/* Estilos para perfil comercial de tienda */
+:root{ --accent:#0b7cff; --muted:#6b7280; --card-shadow:0 10px 30px rgba(2,6,23,0.06);} 
+
+.comercial-banner{ display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:1.25rem; background:#fff; border-radius:12px; box-shadow:var(--card-shadow); margin-bottom:1rem; }
+.banner-left{ display:flex; gap:1rem; align-items:center; }
+.tienda-avatar{ width:96px; height:96px; object-fit:cover; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.06); }
+.banner-left h1{ margin:0; font-size:1.6rem; }
+.banner-left .muted{ color:var(--muted); margin:0.25rem 0 0; }
+
+.stats{ display:flex; gap:1rem; align-items:center; }
+.stat{ text-align:center; padding:0.5rem 0.9rem; background:#f8fafc; border-radius:8px; border:1px solid #eef2f7; }
+.stat strong{ display:block; font-size:1.2rem; }
+.stat span{ color:var(--muted); font-size:0.85rem; }
+
+.comercial-nav{ display:flex; gap:0.5rem; margin:1rem 0; }
+.comercial-nav button{ background:transparent; border:1px solid #e6eefb; padding:0.6rem 0.9rem; border-radius:8px; cursor:pointer; transition:all .15s ease; }
+.comercial-nav button.active{ background:linear-gradient(180deg,var(--accent),#0066d6); color:#fff; border-color:transparent; box-shadow:0 10px 30px rgba(11,124,255,0.12); }
+.comercial-nav button:hover{ transform:translateY(-3px); box-shadow:0 8px 24px rgba(2,6,23,0.06); }
+
+.comercial-main .panel{ background:#fff; padding:1rem; border-radius:10px; box-shadow:var(--card-shadow); }
+
+.productos-list{ display:grid; gap:1rem; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); margin-top:0.75rem; }
+.p-card{ display:flex; gap:0.6rem; background:#fbfcfe; padding:0.6rem; border-radius:8px; align-items:center; }
+.p-card img{ width:84px; height:64px; object-fit:cover; border-radius:6px; }
+.p-body h3{ margin:0; font-size:1rem; }
+.p-meta{ color:var(--muted); font-size:0.9rem; }
+.p-stock{ margin-top:0.4rem; font-size:0.9rem; }
+
+.stock-actions{ margin-top:0.75rem; display:flex; gap:0.6rem; }
+.stock-actions button{ padding:0.5rem 0.8rem; border-radius:8px; border:1px solid #e6eefb; background:transparent; cursor:pointer; }
+
+.low-stock-list{ margin-top:0.8rem; }
+.low-stock-item{ padding:0.5rem; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; }
+
+/* Responsive */
+@media(max-width:900px){ .comercial-banner{ flex-direction:column; align-items:flex-start; } .stats{ width:100%; justify-content:space-between; } }

@@ -1,4 +1,7 @@
 {% load static %}
+{% block css%}
+<link rel="stylesheet" href="{% static 'barra_market/categorias_panel.css' %}">
+{% endblock css %}
 <div id="categorias-panel" class="categorias-panel" aria-hidden="true">
   <div class="categorias-panel__backdrop" data-close></div>
   <div class="categorias-panel__inner">
@@ -7,7 +10,14 @@
       <ul class="categorias-list">
         {% if categorias %}
           {% for cat in categorias %}
-            <li class="categorias-list__item"><a href="#">{{ cat.nomb_ca }}</a></li>
+            {# Enlazamos a la lista de productos con query param ?categoria=<id> #}
+            <li class="categorias-list__item">
+              {% if query %}
+                <a href="{% url 'producto:lista' %}?q={{ query|urlencode }}&categoria={{ cat.pk }}">{{ cat.nomb_ca }}</a>
+              {% else %}
+                <a href="{% url 'producto:lista' %}?categoria={{ cat.pk }}">{{ cat.nomb_ca }}</a>
+              {% endif %}
+            </li>
           {% endfor %}
         {% else %}
           <li class="categorias-list__item">(No hay categorías)</li>
@@ -16,19 +26,17 @@
     </div>
     <div class="categorias-panel__right">
       <div class="categorias-panel__col">
-        <h4>Oportunidades Únicas</h4>
-        <ul class="mini-list">
-          <li>Tecnología</li>
-          <li>Electrohogar</li>
-          <li>Moda</li>
-        </ul>
-      </div>
-      <div class="categorias-panel__col">
         <h4>Marcas</h4>
         <ul class="marcas-list">
           {% if marcas %}
             {% for m in marcas %}
-              <li class="marcas-list__item"><a href="#">{{ m.nomb_marca }}</a></li>
+              <li class="marcas-list__item">
+                {% if query %}
+                  <a href="{% url 'producto:lista' %}?q={{ query|urlencode }}&marca={{ m.pk }}">{{ m.nomb_marca }}</a>
+                {% else %}
+                  <a href="{% url 'producto:lista' %}?marca={{ m.pk }}">{{ m.nomb_marca }}</a>
+                {% endif %}
+              </li>
             {% endfor %}
           {% else %}
             <li>(No hay marcas)</li>

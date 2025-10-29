@@ -1,0 +1,118 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}Productos{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'producto/lista_productos.css' %}">
+{% endblock css %}
+
+{% block content %}
+<div class="productos-container">
+    <div class="productos-layout">
+        <aside class="productos-filtros">
+            {% if selected_categorias or selected_marcas or query %}
+                    <div class="filtro-activo">
+                        <strong>Filtro activo:</strong>
+                        {% if query %}
+                            <div>Busqueda: "{{ query }}"</div>
+                        {% endif %}
+                        {% if selected_categorias %}
+                            <div>Categorías:
+                                <ul style="margin:6px 0 0 12px; padding:0; list-style:disc;">
+                                    {% for c in selected_categorias %}
+                                        <li style="margin:2px 0">{{ c.nomb_ca }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        {% if selected_marcas %}
+                            <div>Marcas:
+                                <ul style="margin:6px 0 0 12px; padding:0; list-style:disc;">
+                                    {% for m in selected_marcas %}
+                                        <li style="margin:2px 0">{{ m.nomb_marca }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        <div style="margin-top:6px"><a href="{% url 'producto:lista' %}">Quitar filtro</a></div>
+                    </div>
+            {% endif %}
+
+            <form id="filtros-form" method="get" action="{% url 'producto:lista' %}">
+                {% if query %}
+                    <input type="hidden" name="q" value="{{ query }}">
+                {% endif %}
+                <div class="filtro-box">
+                    <h4>Categorias</h4>
+                    <div class="filtro-box" style=" height:15vh; overflow-y: auto;">
+                        {% if categorias %}
+                            <ul style="list-style:none; padding:0; margin:0;">
+                                {% for cat in categorias %}
+                                    <li style="padding:6px 0; border-bottom:1px solid #eee;">
+                                        <label style="display:flex; gap:8px; align-items:center;">
+                                            <input type="checkbox" name="categoria" value="{{ cat.pk }}" {% if selected_categoria_ints and cat.pk in selected_categoria_ints %}checked{% elif not selected_categoria_ints and cat.pk|stringformat:"s" in selected_categoria_ids %}checked{% endif %}>
+                                            {{ cat.nomb_ca }}
+                                        </label>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>(No hay categorías)</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="filtro-box">
+                    <h4>Marcas</h4>
+                    <div class="filtro-box" style=" height:15vh; overflow-y: auto;">
+                        
+                        {% if marcas %}
+                            <ul style="list-style:none; padding:0; margin:0;">
+                                {% for m in marcas %}
+                                    <li style="padding:6px 0; border-bottom:1px solid #eee;">
+                                        <label style="display:flex; gap:8px; align-items:center;">
+                                            <input type="checkbox" name="marca" value="{{ m.pk }}" {% if selected_marca_ints and m.pk in selected_marca_ints %}checked{% elif not selected_marca_ints and m.pk|stringformat:"s" in selected_marca_ids %}checked{% endif %}>
+                                            {{ m.nomb_marca }}
+                                        </label>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>(No hay marcas)</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div style="margin-top:12px;">
+                    <button type="submit" class="btn">Aplicar filtros</button>
+                    <a href="{% url 'producto:lista' %}" class="btn btn-link">Limpiar</a>
+                </div>
+            </form>
+        </aside>
+
+        <!-- Columna de productos -->
+        <div class="container_productos" style="flex:1;">
+            {% if productos %}
+                <div class="productos-grid">
+                    {% for p in productos %}
+                        <article class="producto-card">
+                            <a href="{% url 'producto:detalle' p.pk %}" class="producto-link">
+                                <img src="{{ p.imagen_principal_url }}" alt="{{ p.nomb_prod }}" class="producto-img">
+                                <div class="producto-body">
+                                    <h3 class="producto-title">{{ p.nomb_prod }}</h3>
+                                    <p class="producto-tienda">{{ p.tienda.nombre_tienda }}</p>
+                                    <p class="producto-precio">S/. {{ p.precio }}</p>
+                                    <p class="producto-estado">{{ p.get_estado_display }}</p>
+                                </div>
+                            </a>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No hay productos para mostrar.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

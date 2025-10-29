@@ -4,7 +4,15 @@
     box-sizing: border-box;
     font-family: Arial, sans-serif;
     }
-
+.general{
+    background-image: url('https://wallpapers.com/images/hd/white-pc-wo5wzl0cxtx52d1e.jpg');
+    width: 100vw;
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    overflow: auto;
+}
 .header_contenedor {
     display: flex;
     background: linear-gradient(135deg, #6983f3, #8133cf, #d63384, #f06595);
@@ -112,52 +120,6 @@
     font-size: 1vw;
     margin-right: 2vw;
 }
-
-/* Estilos para el grid de categorías mostrado en home */
-.categorias-grid{
-    padding: 3vh 5vw;
-}
-.categorias-grid__title{
-    text-align: center;
-    margin-bottom: 28px;
-    font-size: 3vh;
-    color: #27323a;
-}
-.categorias-grid__list{
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(6, minmax(120px, 1fr));
-    gap: 22px 36px;
-    align-items: center;
-}
-.categoria-btn{
-    background: transparent;
-    border: none;
-    color: #2f3b45;
-    padding: 10px 14px;
-    cursor: pointer;
-    border-radius: 6px;
-    font-size: clamp(12px, 1.2vw, 16px);
-}
-
-@media (max-width: 900px){
-    .categorias-grid__list{ grid-template-columns: repeat(3, minmax(120px, 1fr)); gap: 18px; }
-}
-@media (max-width: 480px){
-    .categorias-grid__list{ grid-template-columns: repeat(2, minmax(100px, 1fr)); gap: 12px; }
-    .categoria-btn{ padding: 8px 10px; }
-}
-.general{
-    background-image: url('https://wallpapers.com/images/hd/white-pc-wo5wzl0cxtx52d1e.jpg');
-    width: 100vw;
-    height: 100vh;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
-    overflow: auto;
-}
-
 /* ===== Dropdown de registro/inicio de sesión ===== */
 .dropdown-login .dropdown-toggle{
     color: white;
@@ -269,4 +231,35 @@
 .dropdown-login .tienda-nombre{
     font-weight: 700;
     font-size: 1rem;
+}
+
+.texto_comercial p {
+    text-align: center;
+    color: transparent;
+    font-weight: bold;
+    margin-top: 5vh;
+    font-size: 2.5vw;
+    font-weight: bold;
+    text-transform: uppercase; /* Convierte el texto a mayúsculas */
+    
+    /* Gradiente de colores con un ángulo de 66 grados */
+    background-image: linear-gradient(135deg, rgb(53, 52, 52), rgb(255, 255, 255),rgb(53, 52, 52), rgb(116, 114, 114), rgb(53, 52, 52), rgb(255, 255, 255),rgb(53, 52, 52), rgb(116, 114, 114));
+    background-size: 400% 400%; /* Hacemos el gradiente más grande para el movimiento */
+    background-clip: text; /* Asegura que el gradiente se aplique solo al texto */
+    
+    /* Animación para mover el gradiente de colores de forma fluida */
+    animation: rainbowText 35s linear infinite; /* Animación más rápida (35 segundos) */
+}
+
+    /* Animación arcoíris para el título */
+@keyframes rainbowText {
+    0% {
+        background-position: 400% 0;
+    }
+    50% {
+        background-position: 0 100%;
+    }
+    100% {
+        background-position: 400% 0;
+    }
 }

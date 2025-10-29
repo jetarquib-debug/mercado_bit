@@ -39,7 +39,7 @@ body{
   position: relative;
   overflow: hidden;                /* recorta las imágenes fuera del área */
   max-width: 90vw;
-  margin: 20px auto;
+  margin: 3vh auto;
   border-radius: 6px;
   /* Usamos aspect-ratio para controlar la altura de forma proporcional al ancho */
   aspect-ratio: var(--carousel-aspect);

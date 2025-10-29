@@ -1,9 +1,24 @@
 {% load static %}
+{% block css%}
+  <link rel="stylesheet" href="{% static 'barra_market/categorias_carousel.css' %}">
+{% endblock css %}
 <section class="categorias-grid">
-  <h2 class="categorias-grid__title">Lo mejor en tecnología</h2>
-  <div class="categorias-grid__list">
-    {% for cat in categorias %}
-      <button class="categoria-btn" type="button">{{ cat.nomb_ca }}</button>
-    {% endfor %}
+  <div class="categorias-carousel">
+    <button class="cat-prev" aria-label="Anterior">◀</button>
+    <div class="categorias-track-wrapper">
+      <div class="categorias-track">
+          {% for cat in categorias %}
+            <div class="categoria-item">
+              {% if query %}
+                <a href="{% url 'producto:lista' %}?q={{ query|urlencode }}&categoria={{ cat.pk }}" class="categoria-link">{{ cat.nomb_ca }}</a>
+              {% else %}
+                <a href="{% url 'producto:lista' %}?categoria={{ cat.pk }}" class="categoria-link">{{ cat.nomb_ca }}</a>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+    </div>
+    <button class="cat-next" aria-label="Siguiente">▶</button>
   </div>
 </section>
+<script src="{% static 'barra_market/categorias_carousel.js' %}"></script>

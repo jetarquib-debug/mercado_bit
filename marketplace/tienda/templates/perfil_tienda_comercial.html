@@ -1,0 +1,100 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block title %}{{ tienda.nombre_tienda }} — Panel comercial{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'tienda/perfil_tienda_comercial.css' %}">
+{% endblock css %}
+
+{% block content %}
+<header class="comercial-banner">
+  <div class="banner-left">
+    <img src="{{ tienda.imagen_principal|default:'/media/tienda/default.png' }}" alt="{{ tienda.nombre_tienda }}" class="tienda-avatar">
+    <div>
+      <h1>{{ tienda.nombre_tienda }}</h1>
+      {% if tienda.descripcion %}<p class="muted">{{ tienda.descripcion }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="banner-right">
+    <div class="stats">
+      <div class="stat"><strong>{{ total_productos }}</strong><span>Productos</span></div>
+      <div class="stat"><strong>{{ en_stock }}</strong><span>En stock</span></div>
+      <div class="stat"><strong>{{ agotados }}</strong><span>Agotados</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="comercial-nav" role="navigation" aria-label="Panel comercial">
+  <button data-action="info" class="active">Información</button>
+  <button data-action="productos">Productos</button>
+  <button data-action="stock">Stock</button>
+  <button data-action="ofertas">Ofertas</button>
+  <button data-action="contacto">Contacto</button>
+</nav>
+
+<main class="comercial-main">
+  <section class="panel panel-info" data-panel="info">
+    <h2>Información de la tienda</h2>
+    <ul>
+      <li><strong>Nombre:</strong> {{ tienda.nombre_tienda }}</li>
+      {% if tienda.descripcion %}<li><strong>Descripción:</strong> {{ tienda.descripcion }}</li>{% endif %}
+      {% if tienda.email %}<li><strong>Email:</strong> <a href="mailto:{{ tienda.email }}">{{ tienda.email }}</a></li>{% endif %}
+      {% if tienda.telefono %}<li><strong>Teléfono:</strong> {{ tienda.telefono }}</li>{% endif %}
+      {% if tienda.direccion %}<li><strong>Dirección:</strong> {{ tienda.direccion }}</li>{% endif %}
+    </ul>
+  </section>
+
+  <section class="panel panel-productos" data-panel="productos" hidden>
+    <h2>Productos</h2>
+    {% if productos %}
+      <div class="productos-list">
+        {% for p in productos %}
+          <article class="p-card">
+            <img src="{{ p.imagen_principal_url }}" alt="{{ p.nomb_prod }}">
+            <div class="p-body">
+              <a href="{% url 'producto:detalle' p.pk %}"><h3>{{ p.nomb_prod }}</h3></a>
+              <div class="p-meta">S/. {{ p.precio }} — <small>{{ p.get_estado_display }}</small></div>
+              <div class="p-stock">Stock: {{ p.stock }}</div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No hay productos en esta tienda.</p>
+    {% endif %}
+  </section>
+
+  <section class="panel panel-stock" data-panel="stock" hidden>
+    <h2>Resumen de stock</h2>
+    <p>Total productos: <strong>{{ total_productos }}</strong></p>
+    <p>En stock: <strong>{{ en_stock }}</strong></p>
+    <p>Agotados: <strong>{{ agotados }}</strong></p>
+    <div class="stock-actions">
+      <button id="btn-export-csv">Exportar inventario (CSV)</button>
+      <button id="btn-low-stock">Ver productos con stock bajo</button>
+    </div>
+    <div id="low-stock-list" class="low-stock-list" hidden></div>
+  </section>
+
+  <section class="panel panel-ofertas" data-panel="ofertas" hidden>
+    <h2>Ofertas y promociones</h2>
+    <p>Gestione las promociones de su tienda aquí. (Funcionalidad futura: crear/editar promociones).</p>
+    <div class="ofertas-acciones">
+      <button id="btn-crear-oferta">Crear nueva oferta</button>
+      <button id="btn-ver-ofertas">Ver ofertas activas</button>
+    </div>
+  </section>
+
+  <section class="panel panel-contacto" data-panel="contacto" hidden>
+    <h2>Contacto</h2>
+    <p>Información de contacto y formularios comerciales.</p>
+    <p>{% if tienda.email %}Email: <a href="mailto:{{ tienda.email }}">{{ tienda.email }}</a>{% endif %}</p>
+  </section>
+</main>
+
+{% block js %}
+<script src="{% static 'tienda/perfil_tienda_comercial.js' %}"></script>
+{% endblock js %}
+
+{% endblock content %}

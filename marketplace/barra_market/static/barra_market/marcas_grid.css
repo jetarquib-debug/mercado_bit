@@ -1,84 +1,113 @@
-.marcas-grid{
-  padding: 28px 20px 40px;
+/* ==============================
+   🌟 MARCAS (con efecto 3D estilo categorías)
+============================== */
+.marcas-grid {
+  margin: 0vh 4vw;
   text-align: center;
 }
-.marcas-grid__title{
-  font-size: 24px;
+
+.marcas-grid__title {
+  font-size: 2.2vw;
   color: #2c3e50;
-  margin-bottom: 14px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-/* Slider viewport */
-.marcas-slider__viewport{
-  overflow: hidden;
+/* Slider principal con efecto 3D */
+.marcas-slider__wrap {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+  position: relative;
   width: 100%;
 }
 
-.marcas-slider__track{
+.marcas-slider__viewport {
+  overflow: hidden;
+  flex: 1;
+}
+
+.marcas-slider__track {
   display: flex;
-  gap: 18px;
-  transition: transform 0.6s ease;
+  gap: 3vw;
+  padding: 12px 8px;
+  transition: transform 600ms cubic-bezier(.22, .9, .3, 1);
   will-change: transform;
-  padding: 6px 10px;
 }
 
-.marca-slide{
-  flex: 0 0 24%; /* cuatro visibles en escritorio */
+/* Tarjetas de marca con efecto flotante */
+.marca-slide {
+  flex: 0 0 22%;
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.marca-slide__card{
+.marca-slide__card {
   width: 100%;
-  border-radius: 12px;
-  overflow: hidden;
-  background: transparent; /* quitar background */
-  box-shadow: none; /* quitar sombra */
-  border: none; /* quitar borde */
+  border-radius: 14px;
+  padding: 2vh 2vw;
+  margin-left: 1vw;
+  background: none;
+  text-decoration: none;
+  color: #333;
+  font-weight: 600;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+  transform-style: preserve-3d;
+  transition: transform 260ms ease, box-shadow 260ms ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
-  position: relative;
-  min-height: 140px; /* más grande para mejor visualización */
+  min-height: 150px;
 }
 
-.marca-slide__img{
+.marca-slide__card:hover {
+  transform: translateY(-6px) rotateX(2deg) translateZ(6px);
+  box-shadow: 0 18px 36px rgba(0,0,0,0.18);
+}
+
+/* Imagen de marca */
+.marca-slide__img {
   max-width: 100%;
   max-height: 110px;
   object-fit: contain;
+  transition: transform 0.3s ease;
 }
 
-.marca-link{ display:block; width:100%; height:100%; text-decoration:none; color:inherit }
-.marca-slide__label{ display:none }
-
-@media (max-width: 1100px){
-  .marca-slide{ flex: 0 0 32%; }
-}
-@media (max-width: 700px){
-  .marca-slide{ flex: 0 0 48%; }
-  .marca-slide__card{ min-height: 120px }
-}
-@media (max-width: 420px){
-  .marca-slide{ flex: 0 0 80%; }
+.marca-slide__card:hover .marca-slide__img {
+  transform: scale(1.05);
 }
 
-/* Botones de navegación */
-.marcas-slider__wrap{ position: relative; display:flex; align-items:center; }
-.marcas-btn{
-  background: rgba(0,0,0,0.06);
-  border: none;
-  width: 42px;
-  height: 42px;
+/* Botones de navegación estilo categorías */
+.marcas-btn {
+  background: none;
+  border: 0;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
   cursor: pointer;
-  font-size: 16px;
-  transition: background .15s ease;
+  font-size: 20px;
+  color: #333;
+  transition: all 0.25s ease;
 }
-.marcas-btn:hover{ background: rgba(0,0,0,0.12); }
-.marcas-prev{ margin-right: 8px; }
-.marcas-next{ margin-left: 8px; }
 
+.marcas-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(0,0,0,0.18);
+  background: rgba(0,0,0,0.05);
+}
 
+/* Responsive */
+@media (max-width: 1100px) {
+  .marca-slide { flex: 0 0 30%; }
+}
+@media (max-width: 800px) {
+  .marca-slide { flex: 0 0 45%; }
+  .marca-slide__card { min-height: 120px; }
+}
+@media (max-width: 480px) {
+  .marca-slide { flex: 0 0 80%; }
+}
