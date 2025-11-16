@@ -1,0 +1,99 @@
+{% load static %}
+{#
+  Template: pagar_button.html
+  Uso: incluir en la plantilla de detalle de orden con el contexto:
+    - orden (instancia de detalle_orden.models.Orden)
+    - metodos_pago (QuerySet o lista de MetodoPago)
+    - pago_action_url (opcional): URL donde enviar el POST. Si no se pasa, el form hará POST a '#'.
+
+  Visible sólo cuando el usuario esté autenticado (session iniciada).
+#}
+
+{% if user.is_authenticated and orden %}
+<div class="pago-wrapper">
+  <form class="pago-form" method="post" action="{{ pago_action_url|default:'#' }}" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="orden_id" value="{{ orden.id }}" />
+    <input type="hidden" name="monto" id="pago-monto" value="{{ orden.total }}" />
+    <input type="hidden" name="transaccion_id" id="pago-transaccion_id" value="" />
+
+    <div class="pago-row">
+      <div class="pago-left">
+        <div class="monto">
+          <label class="monto-label">Total a pagar</label>
+          <div class="monto-value">S/. <span id="monto-visible">{{ orden.total }}</span></div>
+        </div>
+
+        <div class="metodo">
+          <label for="metodo-select">Método de pago</label>
+          <select name="metodo_id" id="metodo-select" required>
+            <option value="" disabled selected>Seleccione un método</option>
+            {% for metodo in metodos_pago %}
+              <option value="{{ metodo.id }}">{{ metodo.nomb_meto }}</option>
+            {% empty %}
+              <option value="">No hay métodos disponibles</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="notas">
+          <label for="notas">Notas (opcional)</label>
+          <textarea name="notas" id="notas" rows="2" placeholder="Instrucciones para entrega o referencia..."></textarea>
+        </div>
+      </div>
+
+      <div class="pago-right">
+        <label class="transaccion-label">Referencia de transacción</label>
+        <input type="text" id="transaccion-visible" readonly aria-readonly="true" class="transaccion-input" />
+
+        <button type="submit" class="btn-pagar" id="btn-pagar" aria-live="polite">
+          <span class="btn-icon">💸</span>
+          <span class="btn-text">Pagar ahora</span>
+          <span class="btn-loader" aria-hidden="true"></span>
+        </button>
+
+        <div class="pago-estado" id="pago-estado" aria-hidden="true"></div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<link rel="stylesheet" href="{% static 'pago/pagar.css' %}">
+
+<script src="{% static 'pago/pagar.js' %}" defer></script>
+
+{% else %}
+  {# Si el usuario no está autenticado: mostrar CTA para iniciar sesión y un formulario compacto inline #}
+  <div class="pago-login-fallback">
+    <p>Debes iniciar sesión para proceder al pago.</p>
+    <div class="login-actions">
+  <a class="btn-pagar" href="{% url 'inicio_sesion:login' %}?next={{ request.path }}">Iniciar sesión</a>
+  <button type="button" class="btn-pagar" id="toggle-inline-login" aria-expanded="false" onclick="(function(){var b=document.getElementById('inline-login'); if(!b) return; b.style.display = (b.style.display === 'none' ? 'block' : 'none'); this.setAttribute('aria-expanded', b.style.display === 'block'); }).call(this);">Iniciar sesión aquí</button>
+    </div>
+
+    <div id="inline-login" class="inline-login" style="display:none;margin-top:12px">
+      <form method="post" action="{% url 'inicio_sesion:login' %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <input name="email" type="email" placeholder="Correo electrónico" required style="flex:1;padding:8px;border-radius:6px;border:1px solid #e6eef6">
+          <input name="contrasena" type="password" placeholder="Contraseña" required style="flex:1;padding:8px;border-radius:6px;border:1px solid #e6eef6">
+          <button type="submit" class="btn-pagar" style="margin-left:4px">Entrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      var btn = document.getElementById('toggle-inline-login');
+      var box = document.getElementById('inline-login');
+      if(btn && box){
+        btn.addEventListener('click', function(){
+          if(box.style.display === 'none') box.style.display = 'block'; else box.style.display = 'none';
+        });
+      }
+    });
+  </script>
+
+{% endif %}
