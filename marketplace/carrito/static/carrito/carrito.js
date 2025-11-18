@@ -1,7 +1,99 @@
 /* carrito.js
    Manage cart stored in localStorage and render cart page; also listens for add-to-cart clicks.
+   CRUD RESTful API integration + notificaciones
 */
 (function(){
+  // --- NOTIFICACIONES ---
+  function showNotification(msg, type = 'info') {
+    const n = document.createElement('div');
+    n.className = 'notification ' + type;
+    n.textContent = msg;
+    n.style.position = 'fixed';
+    n.style.top = '20px';
+    n.style.right = '20px';
+    n.style.background = type === 'error' ? '#d9534f' : '#5bc0de';
+    n.style.color = '#fff';
+    n.style.padding = '10px 20px';
+    n.style.borderRadius = '6px';
+    n.style.zIndex = 9999;
+    document.body.appendChild(n);
+    setTimeout(() => n.remove(), 3000);
+  }
+
+  // --- CRUD API RESTful ---
+  function fetchCarritoAPI() {
+    fetch('/api/v1/carrito/')
+      .then(r => r.json())
+      .then(data => renderCarritoAPI(data.results))
+      .catch(() => showNotification('Error al cargar el carrito', 'error'));
+  }
+  function renderCarritoAPI(items) {
+    const container = document.getElementById('cart-items');
+    container.innerHTML = '';
+    items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      div.innerHTML = `
+        <span>${item.producto_nombre || item.producto}</span>
+        <span>Cantidad: ${item.cantidad}</span>
+        <button onclick="updateCarritoAPI(${item.id}, {cantidad: prompt('Nueva cantidad:', item.cantidad)})">Editar</button>
+        <button onclick="deleteCarritoAPI(${item.id})" style="background:#d9534f;color:#fff;border:none;padding:4px 8px;border-radius:4px;">Eliminar</button>
+      `;
+      container.appendChild(div);
+    });
+    document.getElementById('summary-count').textContent = items.length;
+    document.getElementById('summary-total').textContent = 'S/. ' + (items.reduce((acc, i) => acc + (i.total || 0), 0)).toFixed(2);
+  }
+  function createCarritoAPI(data) {
+    fetch('/api/v1/carrito/', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(res => {
+      showNotification('Producto agregado al carrito', 'success');
+      fetchCarritoAPI();
+    })
+    .catch(() => showNotification('Error al agregar producto', 'error'));
+  }
+  function updateCarritoAPI(id, data) {
+    fetch(`/api/v1/carrito/${id}/`, {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(res => {
+      showNotification('Carrito actualizado', 'success');
+      fetchCarritoAPI();
+    })
+    .catch(() => showNotification('Error al actualizar', 'error'));
+  }
+  function deleteCarritoAPI(id) {
+    fetch(`/api/v1/carrito/${id}/`, {
+      method: 'DELETE'
+    })
+    .then(() => {
+      showNotification('Producto eliminado del carrito', 'success');
+      fetchCarritoAPI();
+    })
+    .catch(() => showNotification('Error al eliminar', 'error'));
+  }
+
+  // --- Vaciar carrito API ---
+  document.addEventListener('DOMContentLoaded', function() {
+    fetchCarritoAPI();
+    const btnClear = document.getElementById('btn-clear');
+    if(btnClear) btnClear.onclick = function() {
+      fetch('/api/v1/carrito/clear/', {method: 'POST'})
+        .then(() => {
+          showNotification('Carrito vaciado', 'success');
+          fetchCarritoAPI();
+        })
+        .catch(() => showNotification('Error al vaciar', 'error'));
+    };
+  });
   function readCart(){
     try{ return JSON.parse(localStorage.getItem('mb_cart')||'[]'); }catch(e){ return []; }
   }

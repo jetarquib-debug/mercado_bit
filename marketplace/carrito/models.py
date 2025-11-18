@@ -10,6 +10,7 @@ class Carrito(models.Model):
         related_name='carritos',
         verbose_name="Usuario"
     )
+    is_active = models.BooleanField(default=True, verbose_name="Activo")
     fecha_creacion = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Fecha de creación"

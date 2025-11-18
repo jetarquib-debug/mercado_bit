@@ -1,4 +1,80 @@
 document.addEventListener('DOMContentLoaded', function(){
+
+  function showNotification(message, type='info'){
+    let notif = document.createElement('div');
+    notif.className = 'notif notif-' + type;
+    notif.textContent = message;
+    notif.style.position = 'fixed';
+    notif.style.top = '24px';
+    notif.style.right = '24px';
+    notif.style.zIndex = '9999';
+    notif.style.padding = '12px 24px';
+    notif.style.borderRadius = '8px';
+    notif.style.background = type==='error' ? '#d9534f' : '#5cb85c';
+    notif.style.color = '#fff';
+    document.body.appendChild(notif);
+    setTimeout(()=> notif.remove(), 3500);
+  }
+
+  window.createTienda = async function(data){
+    try{
+      let resp = await fetch('/api/v1/tiendas/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+      if(resp.status === 201){
+        showNotification('Tienda creada correctamente', 'success');
+        location.reload();
+      }else if(resp.status === 400){
+        let err = await resp.json();
+        showNotification('Error de validación: ' + JSON.stringify(err), 'error');
+      }else{
+        showNotification('Error inesperado ('+resp.status+')', 'error');
+      }
+    }catch(e){
+      showNotification('Error de red', 'error');
+    }
+  }
+
+  window.updateTienda = async function(id, data){
+    try{
+      let resp = await fetch(`/api/v1/tiendas/${id}/`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+      if(resp.status === 200){
+        showNotification('Tienda actualizada correctamente', 'success');
+        location.reload();
+      }else if(resp.status === 400){
+        let err = await resp.json();
+        showNotification('Error de validación: ' + JSON.stringify(err), 'error');
+      }else if(resp.status === 404){
+        showNotification('Tienda no encontrada', 'error');
+      }else{
+        showNotification('Error inesperado ('+resp.status+')', 'error');
+      }
+    }catch(e){
+      showNotification('Error de red', 'error');
+    }
+  }
+
+  window.deleteTienda = async function(id){
+    try{
+      let resp = await fetch(`/api/v1/tiendas/${id}/`, {method:'DELETE'});
+      if(resp.status === 204){
+        showNotification('Tienda eliminada (soft delete)', 'success');
+        location.reload();
+      }else if(resp.status === 404){
+        showNotification('Tienda no encontrada', 'error');
+      }else{
+        showNotification('Error inesperado ('+resp.status+')', 'error');
+      }
+    }catch(e){
+      showNotification('Error de red', 'error');
+    }
+  }
   const nav = document.querySelector('.comercial-nav');
   const buttons = nav ? Array.from(nav.querySelectorAll('button')) : [];
   const panels = document.querySelectorAll('.comercial-main .panel');

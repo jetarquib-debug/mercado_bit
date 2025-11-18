@@ -11,8 +11,20 @@
 <div class="carrito-page">
   <h1>Tu carrito</h1>
   <div class="carrito-container">
-    <div id="cart-items" class="cart-items">
-      <!-- Los items se renderizan por JS -->
+    <div>
+      <h2>Agregar producto al carrito</h2>
+      <form id="formCrearCarrito" onsubmit="event.preventDefault(); createCarritoAPI({
+        producto: document.getElementById('productoId').value,
+        cantidad: document.getElementById('cantidadProducto').value
+      });">
+        <input type="number" id="productoId" name="producto" placeholder="ID Producto" required />
+        <input type="number" id="cantidadProducto" name="cantidad" placeholder="Cantidad" min="1" value="1" required />
+        <button type="submit">Agregar</button>
+      </form>
+      <h2>Productos en el carrito</h2>
+      <div id="cart-items" class="cart-items">
+        <!-- Los items se renderizan por JS -->
+      </div>
     </div>
     <aside class="cart-summary">
       <div class="summary-card">

@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 
 def lista_productos(request):
 	"""Lista productos. Si se recibe ?categoria=<id> filtra por esa categoría."""
-	qs = Producto.objects.filter(estado='disponible').order_by('-fecha_creacion')
+	qs = Producto.objects.filter(estado='disponible', is_active=True).order_by('-fecha_creacion')
 
 	# búsqueda por texto (q)
 	q_text = request.GET.get('q', '').strip()

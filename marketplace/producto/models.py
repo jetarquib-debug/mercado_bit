@@ -8,7 +8,11 @@ from usuario.models import Usuario
 # 🏷️ MARCA
 # ==============================
 class Marca(models.Model):
+    @classmethod
+    def get_queryset(cls):
+        return cls.objects.filter(is_active=True)
     nomb_marca = models.CharField(max_length=100, unique=True, verbose_name="Nombre de la marca")
+    is_active = models.BooleanField(default=True, verbose_name="Activo")
     imagen_marca = models.ImageField(
         upload_to='marcas_imagenes/',
         null=True, blank=True,
@@ -40,7 +44,11 @@ class Marca(models.Model):
 # 🧩 CATEGORÍA
 # ==============================
 class Categoria(models.Model):
+    @classmethod
+    def get_queryset(cls):
+        return cls.objects.filter(is_active=True)
     nomb_ca = models.CharField(max_length=100, unique=True, verbose_name="Nombre de la categoría")
+    is_active = models.BooleanField(default=True, verbose_name="Activo")
     descripcion = models.CharField(max_length=255, null=True, blank=True, verbose_name="Descripción")
     imagen_categoria = models.ImageField(
         upload_to='categorias_imagenes/',
@@ -84,6 +92,7 @@ class Producto(models.Model):
     tienda = models.ForeignKey(
         Tienda, on_delete=models.CASCADE, related_name='productos', verbose_name="Tienda"
     )
+    is_active = models.BooleanField(default=True, verbose_name="Activo")
     nomb_prod = models.CharField(max_length=100, verbose_name="Nombre del producto")
     descripcion = models.CharField(max_length=255, null=True, blank=True, verbose_name="Descripción")
     precio = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio (S/.)")
@@ -99,10 +108,15 @@ class Producto(models.Model):
         Categoria, related_name='productos', verbose_name="Categorías"
     )
 
+
     class Meta:
         verbose_name = "Producto"
         verbose_name_plural = "Productos"
         ordering = ['-fecha_creacion']
+
+    @classmethod
+    def get_queryset(cls):
+        return cls.objects.filter(is_active=True)
 
     def __str__(self):
         return f"{self.nomb_prod} ({self.tienda.nombre_tienda})"

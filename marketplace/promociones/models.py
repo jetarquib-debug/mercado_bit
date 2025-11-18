@@ -31,6 +31,7 @@ class Promocion(models.Model):
     )
     fecha_inicio = models.DateTimeField(verbose_name="Inicio de promoción")
     fecha_fin = models.DateTimeField(verbose_name="Fin de promoción")
+    is_active = models.BooleanField(default=True, verbose_name="Activo")
 
     metodo_pago = models.ForeignKey(
         MetodoPago,

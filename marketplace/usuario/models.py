@@ -129,7 +129,8 @@ class Usuario(models.Model):
 
     nombres = models.CharField(max_length=100, null=True, blank=True)
     apellidos = models.CharField(max_length=100, null=True, blank=True)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, verbose_name="Correo electrónico")
+    is_active = models.BooleanField(default=True, verbose_name="Activo")
     contrasena = models.CharField(max_length=255)
 
     imagenes = models.ManyToManyField(

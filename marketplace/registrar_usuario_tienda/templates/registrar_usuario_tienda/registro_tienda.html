@@ -4,12 +4,13 @@
 {% block title %}<title>Registro de Tienda</title>{% endblock title%}
 {% block css%}
   <link rel="stylesheet" href="{% static 'registrar_usuario_tienda/registrar_tienda.css' %}">
+  <link rel="stylesheet" href="{% static 'marketplace/css/serializers_frontend.css' %}">
 {% endblock css %}
 {% block content %}
   <div class="login-container">
     <div class="container registro-usuario-form">
   <h2>Registrar Tienda</h2>
-  <form method="post" enctype="multipart/form-data">
+  <form data-form="registro-tienda" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {% if messages %}
           <div class="messages">
@@ -357,3 +358,6 @@
     });
   </script>
 {% endblock content %}
+{% block js %}
+<script src="{% static 'marketplace/js/serializers_frontend.js' %}"></script>
+{% endblock js %}

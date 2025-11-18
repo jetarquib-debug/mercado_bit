@@ -7,6 +7,10 @@
 <link rel="stylesheet" href="{% static 'producto/lista_productos.css' %}">
 {% endblock css %}
 
+{% block js %}
+<script src="{% static 'producto/lista_productos.js' %}"></script>
+{% endblock js %}
+
 {% block content %}
 <div class="productos-container">
     <div class="productos-layout">
@@ -115,4 +119,37 @@
         </div>
     </div>
 </div>
+
+<div id="weather-indicator" style="margin:1em 0; padding:1em; background:#eaf6ff; border-radius:8px; display:none;">
+  <span id="weather-loading">Cargando clima...</span>
+  <span id="weather-data" style="display:none;"></span>
+  <span id="weather-fallback" style="color:#d9534f; display:none;"></span>
+</div>
+
+<script>
+function fetchWeather(city) {
+  document.getElementById('weather-indicator').style.display = 'block';
+  document.getElementById('weather-loading').style.display = 'inline';
+  document.getElementById('weather-data').style.display = 'none';
+  document.getElementById('weather-fallback').style.display = 'none';
+  fetch(`/api/weather/?city="+city+"`)
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('weather-loading').style.display = 'none';
+      if(data.error) {
+        document.getElementById('weather-fallback').textContent = data.error;
+        document.getElementById('weather-fallback').style.display = 'inline';
+      } else {
+        document.getElementById('weather-data').textContent = `Clima en ${city}: ${data.weather ? data.weather[0].description : 'N/A'}`;
+        document.getElementById('weather-data').style.display = 'inline';
+      }
+    })
+    .catch(() => {
+      document.getElementById('weather-loading').style.display = 'none';
+      document.getElementById('weather-fallback').textContent = 'Error al consultar clima.';
+      document.getElementById('weather-fallback').style.display = 'inline';
+    });
+}
+document.addEventListener('DOMContentLoaded', function(){ fetchWeather('Lima'); });
+</script>
 {% endblock content %}

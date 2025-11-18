@@ -5,6 +5,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'tienda/perfil_tienda_comercial.css' %}">
+<link rel="stylesheet" href="{% static 'marketplace/css/serializers_frontend.css' %}">
 {% endblock css %}
 
 {% block content %}
@@ -50,12 +51,12 @@
     {% if productos %}
       <div class="productos-list">
         {% for p in productos %}
-          <article class="p-card">
+          <article class="p-card producto-item" data-stock="{{ p.stock }}">
             <img src="{{ p.imagen_principal_url }}" alt="{{ p.nomb_prod }}">
             <div class="p-body">
               <a href="{% url 'producto:detalle' p.pk %}"><h3>{{ p.nomb_prod }}</h3></a>
               <div class="p-meta">S/. {{ p.precio }} — <small>{{ p.get_estado_display }}</small></div>
-              <div class="p-stock">Stock: {{ p.stock }}</div>
+              <div class="p-stock">Stock: {{ p.stock }} {% if p.disponible %}<span class="badge-avail badge-available">Disponible</span>{% else %}<span class="badge-avail badge-unavailable">No disponible</span>{% endif %}</div>
             </div>
           </article>
         {% endfor %}
@@ -95,6 +96,7 @@
 
 {% block js %}
 <script src="{% static 'tienda/perfil_tienda_comercial.js' %}"></script>
+<script src="{% static 'marketplace/js/serializers_frontend.js' %}"></script>
 {% endblock js %}
 
 {% endblock content %}

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'barra_market',
     'carrito',
     'detalle_orden',
@@ -141,3 +142,57 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Configuración REST framework: permisos y throttling por defecto
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.AnonRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '1000/day',
+        'anon': '200/day',
+        # Scoped rates por recurso
+        'productos': '500/day',
+        'usuarios': '200/day',
+        'tiendas': '200/day',
+        'carritos': '1000/day',
+        'detalles': '1000/day',
+        'ordenes': '500/day',
+        'pagos': '300/day',
+        'promociones': '300/day',
+        'metodos_pago': '1000/day',
+    }
+}
+
+# Defaults para filtros y paginación
+REST_FRAMEWORK['DEFAULT_FILTER_BACKENDS'] = [
+    'django_filters.rest_framework.DjangoFilterBackend',
+    'rest_framework.filters.SearchFilter',
+    'rest_framework.filters.OrderingFilter',
+]
+
+
+# --- CACHING CON REDIS ---
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+# Expiración de caché por defecto: 5 minutos
+CACHE_TTL = 60 * 5
+
+# --- CELERY ---
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+
+REST_FRAMEWORK['DEFAULT_PAGINATION_CLASS'] = 'api.pagination.StandardPageNumberPagination'
+REST_FRAMEWORK['PAGE_SIZE'] = 20

@@ -72,6 +72,7 @@ class Tienda(models.Model):
         ImagenPerfilTienda, blank=True, related_name='tiendas', verbose_name="Imágenes"
     )
 
+    is_active = models.BooleanField(default=True, verbose_name="Activo")
     class Meta:
         verbose_name = "Tienda"
         verbose_name_plural = "Tiendas"

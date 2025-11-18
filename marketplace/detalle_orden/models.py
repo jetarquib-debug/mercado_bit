@@ -18,6 +18,7 @@ class Orden(models.Model):
         related_name='ordenes',
         verbose_name="Carrito asociado"
     )
+    is_active = models.BooleanField(default=True, verbose_name="Activo")
     total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total (S/.)")
 
     direccion_entrega = models.CharField(max_length=200, null=True, blank=True, verbose_name="Dirección de entrega")

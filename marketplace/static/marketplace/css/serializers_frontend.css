@@ -1,0 +1,7 @@
+/* Estilos mínimos para errores y previews, no intrusivos */
+.field-error { color: #b00020; font-size: 0.9rem; margin-top: 4px; }
+.field-error-input { border-color: #b00020 !important; box-shadow: 0 0 0 3px rgba(176,0,32,0.06); }
+.preview-img { max-width: 160px; max-height: 160px; object-fit: cover; border-radius: 8px; border: 1px solid #eee; }
+.badge-avail { display:inline-block; padding:4px 8px; border-radius:12px; font-size:0.8rem; }
+.badge-available { background:#e6f7ea; color:#237a3a; border:1px solid #c7f0cf; }
+.badge-unavailable { background:#fff1f0; color:#a61b1b; border:1px solid #f5c6c6; }
