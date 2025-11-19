@@ -27,43 +27,73 @@
     <div class="stock">Stock: {{ producto.stock }} — Estado: {{ producto.get_estado_display }}</div>
     <div class="descripcion">{{ producto.descripcion }}</div>
 
-    <div>
-      <strong>Tienda:</strong>
-      {% if producto.tienda %}
-        <a href="{% url 'tienda:perfil_comercial' pk=producto.tienda.pk %}">{{ producto.tienda.nombre_tienda }}</a>
-      {% else %}
-        (Sin tienda asociada)
-      {% endif %}
-    </div>
-
-    <div style="margin-top:0.75rem;">
-      <strong>Marca:</strong>
-      {% if producto.marca %}
-        {{ producto.marca.nomb_marca }}
-      {% else %}
-        —
-      {% endif %}
-    </div>
-
-    <div style="margin-top:0.75rem;">
-      <strong>Categorías:</strong>
-      <div class="categorias-list">
-        {% for c in categorias %}
-          <span class="categoria-pill">{{ c.nomb_ca }}</span>
-        {% endfor %}
+    <div class="meta-row">
+      <div class="meta-item">
+        <strong>Tienda:</strong>
+        <div style="margin-left:6px;">
+        {% if producto.tienda %}
+          <a href="{% url 'tienda:perfil_comercial' pk=producto.tienda.pk %}">{{ producto.tienda.nombre_tienda }}</a>
+        {% else %}
+          (Sin tienda asociada)
+        {% endif %}
+        </div>
       </div>
+
+      <div class="meta-item">
+        <strong>Marca:</strong>
+        <div style="margin-left:6px;">{% if producto.marca %}{{ producto.marca.nomb_marca }}{% else %}—{% endif %}</div>
+      </div>
+
+      <div class="meta-item">
+        <strong>Categorías:</strong>
+        <div class="categorias-list" style="margin-left:6px;">
+          {% for c in categorias %}
+            <span class="categoria-pill">{{ c.nomb_ca }}</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      {# Campos opcionales que podrían existir en el modelo - se muestran solo si tienen valor #}
+      {% if producto.sku %}
+      <div class="meta-item"><strong>SKU:</strong><div style="margin-left:6px;">{{ producto.sku }}</div></div>
+      {% endif %}
+      {% if producto.condicion %}
+      <div class="meta-item"><strong>Condición:</strong><div style="margin-left:6px;">{{ producto.condicion }}</div></div>
+      {% endif %}
+      {% if producto.fecha_publicacion %}
+      <div class="meta-item"><strong>Publicado:</strong><div style="margin-left:6px;">{{ producto.fecha_publicacion|date:'d M Y' }}</div></div>
+      {% endif %}
     </div>
 
-    <div style="margin-top:1.25rem; display:flex; gap:1rem; align-items:center;">
+    <div class="actions-row" style="margin-top:1.25rem; display:flex; gap:1rem; align-items:center;">
+      <div class="qty-wrapper" style="display:flex; align-items:center; gap:8px;">
+        <label for="producto-cantidad-{{ producto.pk }}" style="font-weight:600; margin-right:6px;">Cantidad</label>
+        <div class="qty-controls" data-product-id="{{ producto.pk }}">
+          <button type="button" class="qty-decrease" aria-label="Disminuir">−</button>
+          <input id="producto-cantidad-{{ producto.pk }}" class="qty-input" type="number" min="1" max="{{ producto.stock }}" value="1" style="width:64px; text-align:center;" />
+          <button type="button" class="qty-increase" aria-label="Aumentar">+</button>
+        </div>
+      </div>
+
       <button type="button" class="btn-comprar add-to-cart" 
         data-id="{{ producto.pk }}" 
         data-name="{{ producto.nomb_prod|escapejs }}" 
         data-price="{{ producto.precio }}"
-        data-image="{{ producto.imagen_principal_url }}">
+        data-image="{{ producto.imagen_principal_url }}"
+        data-quantity="1">
         Agregar al carrito
       </button>
+
       <a href="{% url 'producto:lista' %}" style="margin-left:1rem;">Volver a productos</a>
     </div>
+  </div>
+
+  <div class="detalle-resenas">
+    {# Mostrar reseñas existentes en una fila separada que ocupa ambas columnas #}
+    {% include 'reseña/reseñas_list.html' %}
+
+    {# Incluir formulario de reseñas #}
+    {% include 'reseña/reseña_form.html' %}
   </div>
 </div>
 

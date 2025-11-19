@@ -1,0 +1,36 @@
+.resena-block { margin-top: 2rem; background: #fff; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.resena-block h3 { margin: 0 0 0.75rem 0; font-size: 1.15rem; }
+
+/* Sistema de estrellas accesible con CSS puro */
+.resena-block .rating { display:flex; gap:6px; flex-direction: row-reverse; justify-content:flex-start; }
+.resena-block .rating input { display:none; }
+.resena-block .rating label { font-size:1.6rem; color:#ccc; cursor:pointer; user-select:none; transition: color .12s ease-in-out; }
+
+/* Color para estrellas seleccionadas o en hover. */
+.resena-block .rating input:checked ~ label,
+.resena-block .rating label:hover,
+.resena-block .rating label:hover ~ label { color: #ffb400; }
+
+/* Mejora visual: marcar la estrella del label asociado cuando su input está checked (estrellas iguales o posteriores deben colorearse). */
+.resena-block .rating input#star5:checked ~ label[for="star5"],
+.resena-block .rating input#star4:checked ~ label[for="star4"],
+.resena-block .rating input#star3:checked ~ label[for="star3"],
+.resena-block .rating input#star2:checked ~ label[for="star2"],
+.resena-block .rating input#star1:checked ~ label[for="star1"] {
+	color: #ffb400;
+}
+
+.resena-block textarea { width:100%; border:1px solid #e6e6e6; padding:10px; border-radius:6px; resize:vertical; min-height:80px; }
+.resena-block .actions { margin-top:0.5rem; text-align:right; }
+.resena-block .btn { background:#2575fc; color:#fff; padding:8px 12px; border-radius:6px; border:none; cursor:pointer; }
+
+/* Lista de reseñas (pequeñas mejoras) */
+.resenas-list { margin-top: 1rem; }
+.resenas-list .promedio { font-size: 1rem; color: #333; margin-bottom: 0.5rem; }
+.lista-resenas { list-style:none; padding:0; margin:0; display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:12px; }
+.resena-item { background:#fff; padding:12px; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.04); }
+.resena-item .cabecera { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px; }
+.resena-item .autor { font-weight:600; font-size:0.95rem; }
+.resena-item .fecha { color:#777; font-size:0.85rem; }
+.resena-item .puntuacion { color:#ffb400; margin-bottom:8px; }
+.resena-item .comentario { color:#333; font-size:0.95rem; }

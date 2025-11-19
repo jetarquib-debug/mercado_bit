@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'rest_framework',
     'django_filters',
     'barra_market',
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     'registrar_usuario_tienda',
     'tienda',
     'usuario',
+    'reseña',
 ]
 
 MIDDLEWARE = [

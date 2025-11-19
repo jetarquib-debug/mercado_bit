@@ -51,4 +51,45 @@ document.addEventListener('DOMContentLoaded', function(){
   if(main){
     main.addEventListener('error', ()=> main.src = '/media/productos_imagenes/default_producto.png');
   }
+
+  // Quantity controls and sync with add-to-cart button
+  document.querySelectorAll('.qty-controls').forEach(wrapper => {
+    const input = wrapper.querySelector('.qty-input');
+    const btnInc = wrapper.querySelector('.qty-increase');
+    const btnDec = wrapper.querySelector('.qty-decrease');
+    const productId = wrapper.dataset.productId;
+    const addBtn = document.querySelector(`.add-to-cart[data-id="${productId}"]`);
+
+    if(!input) return; // nothing to do
+
+    function setQuantity(q){
+      const max = Math.max(1, parseInt(input.max || '9999', 10) || 9999);
+      let n = parseInt(q, 10);
+      if(Number.isNaN(n)) n = 1;
+      n = Math.max(1, Math.min(n, max));
+      input.value = n;
+      if(addBtn) addBtn.dataset.quantity = String(n);
+    }
+
+    // Increase / decrease handlers
+    if(btnInc){ btnInc.addEventListener('click', (e)=>{ e.preventDefault(); setQuantity(Number(input.value||1)+1); }); }
+    if(btnDec){ btnDec.addEventListener('click', (e)=>{ e.preventDefault(); setQuantity(Number(input.value||1)-1); }); }
+
+    // Allow keyboard up/down on the input as well
+    input.addEventListener('keydown', (ev)=>{
+      if(ev.key === 'ArrowUp'){ ev.preventDefault(); setQuantity(Number(input.value||1)+1); }
+      if(ev.key === 'ArrowDown'){ ev.preventDefault(); setQuantity(Number(input.value||1)-1); }
+    });
+
+    // Normalize pasted/typed values
+    input.addEventListener('input', ()=>{
+      // ensure only numbers
+      const cleaned = (input.value || '').replace(/[^0-9]/g, '');
+      if(cleaned !== input.value) input.value = cleaned;
+    });
+
+    input.addEventListener('change', ()=> setQuantity(input.value));
+    // initialize
+    setQuantity(input.value || 1);
+  });
 });

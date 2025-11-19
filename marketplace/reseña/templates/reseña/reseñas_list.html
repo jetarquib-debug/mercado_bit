@@ -1,0 +1,26 @@
+{% load humanize %}
+<div class="resenas-list">
+  <h3>Reseñas ({{ reseñas_count }})</h3>
+  {% if reseñas_count and promedio_rating %}
+    <div class="promedio">Promedio: {{ promedio_rating|floatformat:1 }} ★</div>
+  {% endif %}
+
+  {% if reseñas %}
+    <ul class="lista-resenas">
+      {% for r in reseñas %}
+        <li class="resena-item">
+          <div class="cabecera">
+            <strong class="autor">{% if r.usuario %}{{ r.usuario.email }}{% else %}Anónimo{% endif %}</strong>
+            <span class="fecha"> · {{ r.fecha_creacion|naturaltime }}</span>
+          </div>
+          <div class="puntuacion">{% for i in "12345" %}{% if forloop.counter <= r.puntuacion %}★{% else %}☆{% endif %}{% endfor %}</div>
+          {% if r.comentario %}
+            <div class="comentario">{{ r.comentario }}</div>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="sin-resenas">Aún no hay reseñas para este producto.</p>
+  {% endif %}
+</div>

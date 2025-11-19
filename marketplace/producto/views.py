@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Producto, Categoria, Marca
-from django.db.models import Q
+from django.db.models import Q, Avg, Count
 from django.shortcuts import get_object_or_404
 
 
@@ -86,7 +86,7 @@ def lista_productos(request):
 
 def detalle_producto(request, pk):
 	"""Muestra la ficha completa de un producto identificado por su pk."""
-	producto = get_object_or_404(Producto.objects.select_related('marca', 'tienda').prefetch_related('imagenes', 'categoria'), pk=pk)
+	producto = get_object_or_404(Producto.objects.select_related('marca', 'tienda').prefetch_related('imagenes', 'categoria', 'resenas__usuario'), pk=pk)
 
 	# obtener imagen principal y las demás
 	imagen_principal = producto.imagenes.filter(es_principal=True).first()
@@ -94,11 +94,21 @@ def detalle_producto(request, pk):
 
 	categorias = producto.categoria.all()
 
+	# reseñas activas del producto
+	reseñas_qs = producto.resenas.filter(is_active=True)
+	# agregados: promedio y conteo
+	agg = reseñas_qs.aggregate(promedio=Avg('puntuacion'), total=Count('id'))
+	promedio_rating = agg.get('promedio') or 0
+	reseñas_count = agg.get('total') or 0
+
 	return render(request, 'producto/detalle_producto.html', {
 		'producto': producto,
 		'imagen_principal': imagen_principal,
 		'otras_imagenes': otras_imagenes,
 		'categorias': categorias,
+		'reseñas': reseñas_qs,
+		'promedio_rating': promedio_rating,
+		'reseñas_count': reseñas_count,
 	})
 
 

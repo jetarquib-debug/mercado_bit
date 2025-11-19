@@ -9,6 +9,7 @@ from detalles_pedidos.views import DetalleOrdenViewSet
 from detalle_orden.views import OrdenViewSet
 from promociones.views import PromocionViewSet
 from pago.views import PagoViewSet, MetodoPagoViewSet
+from reseña.views import ResenaViewSet
 
 router = DefaultRouter()
 router.register(r'productos', ProductoViewSet, basename='producto')
@@ -20,6 +21,7 @@ router.register(r'ordenes', OrdenViewSet, basename='orden')
 router.register(r'promociones', PromocionViewSet, basename='promocion')
 router.register(r'pagos', PagoViewSet, basename='pago')
 router.register(r'metodos_pago', MetodoPagoViewSet, basename='metodopago')
+router.register(r'resenas', ResenaViewSet, basename='resena')
 
 urlpatterns = [
     path('', include(router.urls)),

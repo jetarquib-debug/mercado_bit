@@ -22,16 +22,23 @@
     if(!btn) return;
     const id = btn.dataset.id; const name = btn.dataset.name; const price = parseFloat(btn.dataset.price||0);
     const image = btn.dataset.image || null;
+    const quantity = Math.max(1, parseInt(btn.dataset.quantity||btn.getAttribute('data-quantity')||1, 10) || 1);
     if(!id) return;
     const cart = readCart();
     let item = findItem(cart, id);
-    if(item){ item.qty = (item.qty||1) + 1; }
-    else { cart.push({ id: id, name: name, price: price, qty: 1 }); }
+    if(item){ item.qty = (item.qty||1) + quantity; }
+    else { cart.push({ id: id, name: name, price: price, qty: quantity }); }
     // attach image if provided
     if(image){ const it = findItem(cart,id); if(it) it.image = image; }
     writeCart(cart);
-    // small feedback
-    btn.innerText = 'Añadido ✓'; setTimeout(()=> btn.innerText = 'Agregar al carrito', 900);
+    // small feedback showing quantity added + animation
+    const prevText = btn.getAttribute('data-prev-text') || btn.innerText;
+    const addedText = `Añadido (${quantity}) ✓`;
+    btn.setAttribute('data-prev-text', prevText);
+    btn.innerText = addedText;
+    // add a transient class to animate the button
+    btn.classList.add('added-animate');
+    setTimeout(()=>{ btn.innerText = prevText; btn.classList.remove('added-animate'); }, 900);
   }
 
   // Render cart page items

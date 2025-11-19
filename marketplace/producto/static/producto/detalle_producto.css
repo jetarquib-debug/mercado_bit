@@ -7,15 +7,18 @@
 }
 
 .detalle-producto{
-  display:flex;
-  gap:2.5rem;
-  align-items:flex-start;
-  padding:2rem 0;
-  max-width:1200px;
+  display: grid;
+  grid-template-columns: 58% 40%;
+  grid-template-rows: auto auto;
+  grid-template-areas: "images info" "resenas resenas";
+  gap:2rem 2.5rem;
+  align-items:start;
+  padding:2.25rem 1.5rem;
+  max-width:1320px;
   margin:0 auto;
 }
 
-.detalle-imagenes{ width:48%; }
+.detalle-imagenes{ grid-area: images; align-self:start; }
 .detalle-imagenes .principal{
   width:100%;
   border-radius:12px;
@@ -35,17 +38,43 @@
 }
 .thumbnails img:hover{ transform:translateY(-6px) scale(1.03); box-shadow:0 14px 34px rgba(2,6,23,0.12); }
 
-.detalle-info{ width:52%; }
-.detalle-info h1{ margin:0 0 0.5rem 0; font-size:2rem; line-height:1.05; }
-.precio{ font-size:1.6rem; font-weight:800; color:#111827; margin:0.5rem 0; }
-.stock{ margin:0.5rem 0; color:var(--muted); }
-.descripcion{ margin:1rem 0; color:#374151; font-size:1rem; }
+.detalle-info{ grid-area: info; padding:0.8rem 1.1rem; background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.98)); border-radius:12px; box-shadow:0 12px 34px rgba(2,6,23,0.04); }
+.detalle-info h1{ margin:0 0 0.45rem 0; font-size:2.2rem; line-height:1.02; }
+.precio{ font-size:1.6rem; font-weight:800; color:#0f1724; margin:0.35rem 0; }
+.stock{ margin:0.35rem 0; color:var(--muted); font-size:0.95rem; }
+.descripcion{ margin:0.9rem 0; color:#374151; font-size:1rem; }
+
+.detalle-info .meta-row{ display:flex; gap:1rem; flex-direction:column; margin-top:0.6rem; }
+.detalle-info .meta-row .meta-item{ display:flex; gap:0.5rem; align-items:center; color:var(--muted); }
 
 .categorias-list{ display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.5rem; }
 .categoria-pill{ padding:0.35rem 0.6rem; background:#f8fafc; border-radius:999px; font-size:0.9rem; color:#111827; border:1px solid #eef2f7; }
 
 .btn-comprar{ display:inline-block; padding:0.7rem 1.1rem; background:linear-gradient(180deg,var(--accent),#0066d6); color:#fff; border-radius:10px; text-decoration:none; box-shadow:0 10px 30px rgba(11,124,255,0.18); transition: transform .12s ease, box-shadow .12s ease; }
 .btn-comprar:hover{ transform:translateY(-4px); box-shadow:0 18px 46px rgba(11,124,255,0.22); }
+
+/* Animación breve al añadir al carrito */
+.btn-comprar.added-animate{ animation: mb-add-pulse 520ms cubic-bezier(.2,.8,.2,1); box-shadow:0 22px 56px rgba(11,124,255,0.22); transform:translateY(-3px); }
+@keyframes mb-add-pulse{ 0%{ transform:scale(1); } 50%{ transform:scale(1.06); } 100%{ transform:scale(1); } }
+
+/* Quantity controls styling */
+.qty-wrapper { display:flex; align-items:center; gap:8px; }
+.qty-controls { display:flex; align-items:center; gap:6px; background:#f8fafc; padding:6px; border-radius:8px; border:1px solid #eef2f7; }
+.qty-controls .qty-decrease, .qty-controls .qty-increase { background:#fff; border:1px solid #e6eefb; color:var(--accent); width:36px; height:36px; border-radius:8px; font-size:1.1rem; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(2,6,23,0.04); }
+.qty-controls .qty-decrease:hover, .qty-controls .qty-increase:hover { transform:translateY(-2px); box-shadow:0 12px 26px rgba(2,6,23,0.06); }
+.qty-controls .qty-input { width:64px; border:none; background:transparent; text-align:center; font-weight:600; font-size:1rem; }
+
+/* Show selected quantity on the button when different than 1 */
+.btn-comprar[data-quantity]:not([data-quantity="1"])::after {
+  /* removed: counter suffix disabled to keep UI cleaner */
+  content: "";
+}
+
+/* Small responsive adjustments */
+@media (max-width: 900px){
+  .qty-controls .qty-decrease, .qty-controls .qty-increase { width:34px; height:34px; }
+  .qty-controls .qty-input { width:56px; }
+}
 
 /* Lightbox modal */
 .pd-lightbox{ position:fixed; inset:0; background:rgba(4,6,12,0.6); display:flex; align-items:center; justify-content:center; z-index:9999; opacity:0; pointer-events:none; transition:opacity .18s ease; }
@@ -55,9 +84,14 @@
 /* Responsive */
 @media (max-width: 900px){
   .detalle-producto{ flex-direction:column; }
+  .detalle-producto{ display:block; }
   .detalle-imagenes, .detalle-info{ width:100%; }
   .thumbnails img{ width:64px; height:64px; }
 }
+
+/* reseñas row styling */
+.detalle-resenas{ grid-area: resenas; margin-top:1.25rem; }
+.detalle-resenas .card{ box-shadow:0 12px 34px rgba(2,6,23,0.04); border-radius:10px; padding:1rem; background:#fff; }
 
 /* Small niceties */
 .producto-tienda a{ color:var(--accent); text-decoration:none; }

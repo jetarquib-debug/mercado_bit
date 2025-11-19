@@ -1,0 +1,23 @@
+{% load static %}
+<div class="resena-block">
+  <h3>Escribe una reseña</h3>
+  <form method="post" action="{% url 'producto:crear_reseña' producto.pk %}" class="resena-form"
+        data-product-id="{{ producto.pk }}" data-authenticated="{{ request.user.is_authenticated|yesno:'1,0' }}">
+    {% csrf_token %}
+    <div class="rating" aria-label="Puntuación">
+      <input type="radio" id="star5" name="puntuacion" value="5"><label for="star5" title="5 estrellas">★</label>
+      <input type="radio" id="star4" name="puntuacion" value="4"><label for="star4" title="4 estrellas">★</label>
+      <input type="radio" id="star3" name="puntuacion" value="3"><label for="star3" title="3 estrellas">★</label>
+      <input type="radio" id="star2" name="puntuacion" value="2"><label for="star2" title="2 estrellas">★</label>
+      <input type="radio" id="star1" name="puntuacion" value="1"><label for="star1" title="1 estrella">★</label>
+    </div>
+    <div class="comentario">
+      <textarea name="comentario" rows="4" placeholder="Escribe tu comentario aquí..."></textarea>
+    </div>
+    <div class="actions">
+      <button type="submit" class="btn">Enviar reseña</button>
+    </div>
+  </form>
+</div>
+<link rel="stylesheet" href="{% static 'reseña/reseña.css' %}">
+<script src="{% static 'reseña/reseña.js' %}"></script>
