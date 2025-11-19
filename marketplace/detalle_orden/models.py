@@ -1,8 +1,10 @@
 from django.db import models
 from carrito.models import Carrito
 from usuario.models import Pais, Provincia, Distrito
+from marketplace.utils.softdelete import SoftDeleteModel
 
-class Orden(models.Model):
+
+class Orden(SoftDeleteModel):
     ESTADO_CHOICES = [
         ('pendiente_envio', 'Pendiente de Envío'),
         ('preparando_envio', 'Preparando Envío'),
@@ -48,6 +50,10 @@ class Orden(models.Model):
             self.total = sum(detalle.subtotal for detalle in detalles)
             self.save()
         return self.total
+
+    def delete(self, using=None, keep_parents=False):
+        # soft delete orden
+        self.soft_delete()
 
     @property
     def entregada(self):

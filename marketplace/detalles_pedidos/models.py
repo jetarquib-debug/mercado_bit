@@ -1,8 +1,10 @@
 from django.db import models
 from carrito.models import Carrito
 from producto.models import Producto
+from marketplace.utils.softdelete import SoftDeleteModel
 
-class DetalleOrden(models.Model):
+
+class DetalleOrden(SoftDeleteModel):
     carrito = models.ForeignKey(
         Carrito,
         on_delete=models.CASCADE,
@@ -30,3 +32,7 @@ class DetalleOrden(models.Model):
         verbose_name = "Detalle de Orden"
         verbose_name_plural = "Detalles de Órdenes"
         ordering = ['carrito']
+
+    def delete(self, using=None, keep_parents=False):
+        # soft delete detalle
+        self.soft_delete()

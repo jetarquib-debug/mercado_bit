@@ -25,10 +25,18 @@ def home(request):
     promociones = []
     if Promocion is not None:
         ahora = timezone.now()
-        qs = Promocion.objects.filter(fecha_inicio__lte=ahora, fecha_fin__gte=ahora)
-        if not qs.exists():
-            qs = Promocion.objects.all()[:6]
-        promociones = qs
+        try:
+            qs = Promocion.objects.filter(fecha_inicio__lte=ahora, fecha_fin__gte=ahora)
+            if not qs.exists():
+                qs = Promocion.objects.all()[:6]
+            promociones = qs
+        except Exception:
+            # Si la consulta falla (p. ej. columna faltante por migraciones pendientes),
+            # devolvemos un fallback silencioso para evitar 500s en la página principal.
+            try:
+                promociones = Promocion.objects.all()[:6]
+            except Exception:
+                promociones = []
 
     categorias = []
     if Categoria is not None:

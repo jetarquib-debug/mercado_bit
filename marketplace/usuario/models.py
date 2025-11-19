@@ -1,12 +1,15 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
 from django.utils.html import format_html
+from django.core.files.storage import default_storage
+from django.conf import settings
+from marketplace.utils.softdelete import SoftDeleteModel
 
 
 # ==============================
 # 📸 IMAGEN PERFIL USUARIO
 # ==============================
-class ImagenPerfilUsuario(models.Model):
+class ImagenPerfilUsuario(SoftDeleteModel):
     imagen = models.ImageField(
         upload_to='usuario/',
         default='usuario/default.png'
@@ -24,16 +27,22 @@ class ImagenPerfilUsuario(models.Model):
 
     # 🖼️ Mostrar imagen en admin
     def vista_previa(self):
-        if self.imagen:
-            return format_html('<img src="{}" width="70" height="70" style="border-radius:8px; object-fit:cover;" />', self.imagen.url)
-        return "(Sin imagen)"
+        # Verificación: si la imagen no existe en storage, usar placeholder
+        if self.imagen and getattr(self.imagen, 'name', None):
+            try:
+                if default_storage.exists(self.imagen.name):
+                    return format_html('<img src="{}" width="70" height="70" style="border-radius:8px; object-fit:cover;" />', self.imagen.url)
+            except Exception:
+                pass
+        default_url = settings.MEDIA_URL.rstrip('/') + '/usuario/default.png'
+        return format_html('<img src="{}" width="70" height="70" style="border-radius:8px; object-fit:cover;" />', default_url)
     vista_previa.short_description = "Vista previa"
 
 
 # ==============================
 # 🌍 UBICACIÓN GEOGRÁFICA
 # ==============================
-class Pais(models.Model):
+class Pais(SoftDeleteModel):
     nomb_pais = models.CharField(max_length=100, unique=True)
 
     class Meta:
@@ -45,7 +54,7 @@ class Pais(models.Model):
         return self.nomb_pais
 
 
-class Departamento(models.Model):
+class Departamento(SoftDeleteModel):
     nomb_departamento = models.CharField(max_length=100)
     pais = models.ForeignKey(Pais, on_delete=models.CASCADE, related_name='departamentos')
 
@@ -58,7 +67,7 @@ class Departamento(models.Model):
         return self.nomb_departamento
 
 
-class Provincia(models.Model):
+class Provincia(SoftDeleteModel):
     nomb_provincia = models.CharField(max_length=100)
     departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE, related_name='provincias')
 
@@ -71,7 +80,7 @@ class Provincia(models.Model):
         return self.nomb_provincia
 
 
-class Distrito(models.Model):
+class Distrito(SoftDeleteModel):
     nomb_distrito = models.CharField(max_length=100)
     provincia = models.ForeignKey(Provincia, on_delete=models.CASCADE, related_name='distritos')
 
@@ -87,7 +96,7 @@ class Distrito(models.Model):
 # ==============================
 # ☎️ CÓDIGO DE PAÍS
 # ==============================
-class CodigoPais(models.Model):
+class CodigoPais(SoftDeleteModel):
     pais = models.OneToOneField(
         Pais,
         on_delete=models.CASCADE,
@@ -111,16 +120,22 @@ class CodigoPais(models.Model):
 
     # 🏳️ Mostrar bandera en el admin
     def bandera(self):
-        if self.imagen_pais:
-            return format_html('<img src="{}" width="40" height="25" style="object-fit:cover; border:1px solid #ddd;" />', self.imagen_pais.url)
-        return "(Sin imagen)"
+        # Verificar existencia del archivo de bandera en storage
+        if self.imagen_pais and getattr(self.imagen_pais, 'name', None):
+            try:
+                if default_storage.exists(self.imagen_pais.name):
+                    return format_html('<img src="{}" width="40" height="25" style="object-fit:cover; border:1px solid #ddd;" />', self.imagen_pais.url)
+            except Exception:
+                pass
+        default_url = settings.MEDIA_URL.rstrip('/') + '/codigo_pais/default_bandera.png'
+        return format_html('<img src="{}" width="40" height="25" style="object-fit:cover; border:1px solid #ddd;" />', default_url)
     bandera.short_description = "Bandera"
 
 
 # ==============================
 # 👤 USUARIO
 # ==============================
-class Usuario(models.Model):
+class Usuario(SoftDeleteModel):
     SEXO_CHOICES = [
         ('M', 'Masculino'),
         ('F', 'Femenino'),
@@ -198,8 +213,15 @@ class Usuario(models.Model):
     # 🧩 Propiedad: imagen principal
     @property
     def imagen_principal(self):
+        # Retornar URL segura: comprobar que el archivo existe
         img = self.imagenes.filter(es_principal=True).first()
-        return img.imagen.url if img else '/media/usuario/default.png'
+        if img and getattr(img.imagen, 'name', None):
+            try:
+                if default_storage.exists(img.imagen.name):
+                    return img.imagen.url
+            except Exception:
+                pass
+        return settings.MEDIA_URL.rstrip('/') + '/usuario/default.png'
 
     # 🖼️ Mostrar en admin
     def vista_previa(self):
@@ -208,3 +230,12 @@ class Usuario(models.Model):
             self.imagen_principal
         )
     vista_previa.short_description = "Foto Perfil"
+
+    def delete(self, using=None, keep_parents=False):
+        # Soft delete user and related images
+        for img in self.imagenes.all():
+            try:
+                img.soft_delete()
+            except Exception:
+                pass
+        self.soft_delete()

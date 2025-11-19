@@ -1,9 +1,12 @@
 from django.db import models
 from usuario.models import Usuario, CodigoPais, Distrito, Provincia, Departamento, Pais
 from django.utils.html import format_html
+from django.core.files.storage import default_storage
+from django.conf import settings
+from marketplace.utils.softdelete import SoftDeleteModel
 
 # --- IMAGEN DE PERFIL DE TIENDA ---
-class ImagenPerfilTienda(models.Model):
+class ImagenPerfilTienda(SoftDeleteModel):
     imagen = models.ImageField(
         upload_to='tienda/',
         default='tienda/default.png',
@@ -22,17 +25,24 @@ class ImagenPerfilTienda(models.Model):
 
     # 🖼️ Vista previa para el admin
     def vista_previa(self):
-        if self.imagen:
-            return format_html(
-                '<img src="{}" width="80" height="80" style="border-radius:8px; object-fit:cover;" />',
-                self.imagen.url
-            )
-        return "(Sin imagen)"
+        # Verificación: comprobar existencia del archivo antes de usar .url
+        if self.imagen and getattr(self.imagen, 'name', None):
+            try:
+                if default_storage.exists(self.imagen.name):
+                    return format_html(
+                        '<img src="{}" width="80" height="80" style="border-radius:8px; object-fit:cover;" />',
+                        self.imagen.url
+                    )
+            except Exception:
+                pass
+        # fallback a imagen por defecto si el archivo no está disponible
+        default_url = settings.MEDIA_URL.rstrip('/') + '/tienda/default.png'
+        return format_html('<img src="{}" width="80" height="80" style="border-radius:8px; object-fit:cover;" />', default_url)
 
     vista_previa.short_description = "Vista previa"
 
 # --- MODELO TIENDA ---
-class Tienda(models.Model):
+class Tienda(SoftDeleteModel):
     nombre_tienda = models.CharField(max_length=150, verbose_name="Nombre de la tienda")
     descripcion = models.CharField(max_length=255, null=True, blank=True, verbose_name="Descripción")
     email = models.EmailField(unique=True, null=True, blank=True, verbose_name="Correo electrónico")
@@ -99,9 +109,14 @@ class Tienda(models.Model):
     def imagen_principal(self):
         """Devuelve la imagen principal o una por defecto."""
         principal = self.imagenes.filter(es_principal=True).first()
-        if principal:
-            return principal.imagen.url
-        return '/media/tienda/default.png'
+        if principal and getattr(principal.imagen, 'name', None):
+            try:
+                if default_storage.exists(principal.imagen.name):
+                    return principal.imagen.url
+            except Exception:
+                pass
+        # fallback: devolver URL por defecto si no existe la imagen
+        return settings.MEDIA_URL.rstrip('/') + '/tienda/default.png'
 
     @property
     def ubicacion_completa(self):
@@ -119,3 +134,12 @@ class Tienda(models.Model):
     def imagenes_contador(self):
         """Cantidad de imágenes asociadas."""
         return self.imagenes.count()
+
+    def delete(self, using=None, keep_parents=False):
+        # Soft delete tienda and its images
+        for img in self.imagenes.all():
+            try:
+                img.soft_delete()
+            except Exception:
+                pass
+        self.soft_delete()

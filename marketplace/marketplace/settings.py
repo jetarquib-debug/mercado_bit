@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'barra_market',
     'carrito',
     'detalle_orden',
@@ -141,3 +142,32 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Django REST Framework configuration: permisos y throttling por defecto
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'marketplace.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    ),
+    'DEFAULT_THROTTLE_CLASSES': (
+        'marketplace.throttles.UserBurstRateThrottle',
+        'marketplace.throttles.UserSustainedRateThrottle',
+        'marketplace.throttles.AnonBurstRateThrottle',
+        'marketplace.throttles.AnonSustainedRateThrottle',
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'user_burst': '60/min',
+        'user_sustained': '1000/day',
+        'anon_burst': '10/min',
+        'anon_sustained': '200/day',
+    },
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ),
+}

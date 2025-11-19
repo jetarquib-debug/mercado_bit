@@ -100,3 +100,62 @@ def detalle_producto(request, pk):
 		'otras_imagenes': otras_imagenes,
 		'categorias': categorias,
 	})
+
+
+# --------------------
+# API (DRF) ViewSets
+# --------------------
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from .serializers import ProductoSerializer
+from marketplace.permissions import IsOwnerOrReadOnly, IsAuthenticatedOrReadOnly
+from marketplace.throttles import UserBurstRateThrottle, AnonBurstRateThrottle
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+from .filters import ProductoFilter
+from marketplace.pagination import StandardPageNumberPagination
+from django.db import transaction
+
+
+class ProductoViewSet(viewsets.ModelViewSet):
+	"""API ViewSet para Producto con acciones custom."""
+	queryset = Producto.objects.all().select_related('marca', 'tienda').prefetch_related('imagenes', 'categoria')
+	serializer_class = ProductoSerializer
+	permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+	throttle_classes = (UserBurstRateThrottle, AnonBurstRateThrottle)
+	filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+	filterset_class = ProductoFilter
+	search_fields = ('nomb_prod', 'descripcion')
+	ordering_fields = ('precio', 'fecha_creacion', 'stock')
+	pagination_class = StandardPageNumberPagination
+
+	@action(detail=True, methods=['post'])
+	def set_principal_image(self, request, pk=None):
+		"""Marca una imagen del producto como principal.
+		Body esperado: {"imagen_id": <id>}"""
+		producto = self.get_object()
+		imagen_id = request.data.get('imagen_id')
+		if not imagen_id:
+			return Response({'detail': 'imagen_id requerido.'}, status=status.HTTP_400_BAD_REQUEST)
+		imagen = producto.imagenes.filter(pk=imagen_id).first()
+		if not imagen:
+			return Response({'detail': 'Imagen no encontrada para este producto.'}, status=status.HTTP_404_NOT_FOUND)
+		# desmarcar anteriores
+		try:
+			with transaction.atomic():
+				producto.imagenes.update(es_principal=False)
+				imagen.es_principal = True
+				imagen.save(update_fields=['es_principal'])
+		except Exception as e:
+			return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+		return Response({'detail': 'Imagen marcada como principal.'})
+
+	@action(detail=True, methods=['get'])
+	def promociones(self, request, pk=None):
+		"""Devuelve promociones aplicables al producto."""
+		producto = self.get_object()
+		promos = producto.promociones.filter(fecha_inicio__lte=__import__('django.utils.timezone').utils.timezone.now(), fecha_fin__gte=__import__('django.utils.timezone').utils.timezone.now())
+		# enviar IDs y porcentaje
+		data = [{'id': p.id, 'descuento_porcentaje': p.descuento_porcentaje} for p in promos]
+		return Response(data)

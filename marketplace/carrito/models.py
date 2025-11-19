@@ -1,7 +1,8 @@
 from django.db import models
 from usuario.models import Usuario
+from marketplace.utils.softdelete import SoftDeleteModel
 
-class Carrito(models.Model):
+class Carrito(SoftDeleteModel):
     usuario = models.ForeignKey(
         Usuario,
         null=True,
@@ -29,3 +30,13 @@ class Carrito(models.Model):
         Devuelve la cantidad total de productos en el carrito (si existe un modelo DetalleCarrito o similar).
         """
         return getattr(self, 'detalles', []).count() if hasattr(self, 'detalles') else 0
+
+    def delete(self, using=None, keep_parents=False):
+        # soft delete detalles and carrito
+        if hasattr(self, 'detalles'):
+            for d in self.detalles.all():
+                try:
+                    d.soft_delete()
+                except Exception:
+                    pass
+        self.soft_delete()

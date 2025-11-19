@@ -29,6 +29,7 @@ urlpatterns = [
     path('inicio_sesion/', include('inicio_sesion.urls')),
     path('usuario/', include('usuario.urls')),
     path('tienda/', include('tienda.urls')),
+    path('api/', include('marketplace.api_urls')),
 ]
 
 if settings.DEBUG:

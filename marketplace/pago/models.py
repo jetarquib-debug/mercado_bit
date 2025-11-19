@@ -1,8 +1,11 @@
 from django.db import models
 from detalle_orden.models import Orden
+from marketplace.utils.softdelete import SoftDeleteModel
+from django.core.files.storage import default_storage
+from django.conf import settings
 
 # 🏦 Métodos de pago
-class MetodoPago(models.Model):
+class MetodoPago(SoftDeleteModel):
     nomb_meto = models.CharField(max_length=50, unique=True, verbose_name="Nombre del método")
     imagen_metodo = models.ImageField(
         upload_to='metodos_pago_imagenes/',
@@ -23,13 +26,17 @@ class MetodoPago(models.Model):
     @property
     def imagen_url(self):
         """Devuelve la URL completa de la imagen o la ruta por defecto."""
-        try:
-            return self.imagen_metodo.url
-        except ValueError:
-            return '/media/metodos_pago_imagenes/default.png'
+        # Verificación robusta: usar storage.exists antes de acceder a .url
+        if self.imagen_metodo and getattr(self.imagen_metodo, 'name', None):
+            try:
+                if default_storage.exists(self.imagen_metodo.name):
+                    return self.imagen_metodo.url
+            except Exception:
+                pass
+        return settings.MEDIA_URL.rstrip('/') + '/metodos_pago_imagenes/default.png'
 
 # 💳 Modelo: Pagos
-class Pago(models.Model):
+class Pago(SoftDeleteModel):
     ESTADO_CHOICES = [
         ('pendiente', 'Pendiente'),
         ('procesando', 'Procesando'),
@@ -146,3 +153,6 @@ class Pago(models.Model):
         self.estado = 'reembolsado'
         self.save(update_fields=['estado', 'actualizado_en'])
         return self.estado
+
+    def delete(self, using=None, keep_parents=False):
+        self.soft_delete()

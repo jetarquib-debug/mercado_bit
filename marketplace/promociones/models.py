@@ -2,9 +2,12 @@ from django.db import models
 from django.utils import timezone
 from pago.models import MetodoPago
 from producto.models import Producto, Categoria
+from marketplace.utils.softdelete import SoftDeleteModel
+from django.core.files.storage import default_storage
+from django.conf import settings
 
 
-class Promocion(models.Model):
+class Promocion(SoftDeleteModel):
     productos = models.ManyToManyField(
         Producto,
         related_name='promociones',
@@ -73,9 +76,14 @@ class Promocion(models.Model):
     @property
     def imagen_url(self):
         """Devuelve la URL de la imagen o una por defecto."""
-        if self.imagen_promocion and hasattr(self.imagen_promocion, 'url'):
-            return self.imagen_promocion.url
-        return '/media/promociones_imagenes/default.png'
+        # Verificar existencia en storage antes de exponer .url
+        if self.imagen_promocion and getattr(self.imagen_promocion, 'name', None):
+            try:
+                if default_storage.exists(self.imagen_promocion.name):
+                    return self.imagen_promocion.url
+            except Exception:
+                pass
+        return settings.MEDIA_URL.rstrip('/') + '/promociones_imagenes/default.png'
 
     def clean(self):
         """Validación: la fecha de fin debe ser posterior a la de inicio."""
