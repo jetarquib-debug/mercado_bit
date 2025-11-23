@@ -4,6 +4,8 @@ from django.utils.html import format_html
 from django.core.files.storage import default_storage
 from django.conf import settings
 from marketplace.utils.softdelete import SoftDeleteModel
+from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 
 # ==============================
@@ -239,3 +241,62 @@ class Usuario(SoftDeleteModel):
             except Exception:
                 pass
         self.soft_delete()
+
+    @property
+    def fondo_url(self):
+        """Retorna la URL del fondo activo del usuario si existe, o la imagen por defecto."""
+        # Buscar fondo marcado como activo para este usuario
+        fondo = getattr(self, 'fondos', None)
+        if fondo is not None:
+            activo = fondo.filter(is_active=True).first()
+            if activo and getattr(activo.imagen, 'name', None):
+                try:
+                    if default_storage.exists(activo.imagen.name):
+                        return activo.imagen.url
+                except Exception:
+                    pass
+        # fallback: revisar si existe un fondo subido (último)
+        if fondo is not None:
+            ultimo = fondo.order_by('-fecha_subida').first()
+            if ultimo and getattr(ultimo.imagen, 'name', None):
+                try:
+                    if default_storage.exists(ultimo.imagen.name):
+                        return ultimo.imagen.url
+                except Exception:
+                    pass
+        # por defecto usar archivo en MEDIA
+        # fallback a fondo por defecto del proyecto
+        return settings.MEDIA_URL.rstrip('/') + '/usuario/fondo_de_pantalla.jpg'
+
+
+# ==============================
+# 🖼️ Fondos de pantalla de usuario
+# ==============================
+class FondoPantallaUsuario(SoftDeleteModel):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='fondos', null=True, blank=True)
+    imagen = models.ImageField(upload_to='usuario/fondos/', null=False, blank=False)
+    is_default = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
+    fecha_subida = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name = "Fondo de Pantalla"
+        verbose_name_plural = "Fondos de Pantalla"
+        ordering = ['-fecha_subida']
+
+    def __str__(self):
+        owner = f"Usuario {self.usuario.id}" if self.usuario else "Global"
+        return f"Fondo {self.id} ({owner})"
+
+    def save(self, *args, **kwargs):
+        # Si se marca como activo, desactivar otros fondos del mismo usuario
+        super().save(*args, **kwargs)
+        try:
+            if self.usuario and self.is_active:
+                # desactivar otros
+                self.usuario.fondos.exclude(id=self.id).update(is_active=False)
+            if self.is_default:
+                # opcional: podríamos controlar una única imagen por defecto global
+                pass
+        except Exception:
+            pass

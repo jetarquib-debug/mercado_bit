@@ -92,7 +92,9 @@ def detalle_producto(request, pk):
 	imagen_principal = producto.imagenes.filter(es_principal=True).first()
 	otras_imagenes = producto.imagenes.exclude(pk=imagen_principal.pk) if imagen_principal else producto.imagenes.all()
 
-	categorias = producto.categoria.all()
+	# obtener solo las categorías asociadas a este producto en una clave distinta
+	# para no sobrescribir la variable global `categorias` usada por el panel
+	product_categorias = producto.categoria.all()
 
 	# reseñas activas del producto
 	reseñas_qs = producto.resenas.filter(is_active=True)
@@ -105,7 +107,7 @@ def detalle_producto(request, pk):
 		'producto': producto,
 		'imagen_principal': imagen_principal,
 		'otras_imagenes': otras_imagenes,
-		'categorias': categorias,
+		'product_categorias': product_categorias,
 		'reseñas': reseñas_qs,
 		'promedio_rating': promedio_rating,
 		'reseñas_count': reseñas_count,

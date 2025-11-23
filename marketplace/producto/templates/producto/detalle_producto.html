@@ -31,37 +31,45 @@
       <div class="meta-item">
         <strong>Tienda:</strong>
         <div style="margin-left:6px;">
-        {% if producto.tienda %}
-          <a href="{% url 'tienda:perfil_comercial' pk=producto.tienda.pk %}">{{ producto.tienda.nombre_tienda }}</a>
-        {% else %}
-          (Sin tienda asociada)
-        {% endif %}
+          {% if producto.tienda %}
+            <a href="{% url 'tienda:perfil_comercial' pk=producto.tienda.pk %}">{{ producto.tienda.nombre_tienda }}</a>
+          {% else %}
+            (Sin tienda asociada)
+          {% endif %}
         </div>
       </div>
 
       <div class="meta-item">
         <strong>Marca:</strong>
-        <div style="margin-left:6px;">{% if producto.marca %}{{ producto.marca.nomb_marca }}{% else %}—{% endif %}</div>
+        <div style="margin-left:6px;">
+          {% if producto.marca %}
+            <a href="{% url 'producto:lista' %}?marca={{ producto.marca.pk }}" class="marca-button">{{ producto.marca.nomb_marca }}</a>
+          {% else %}
+            —
+          {% endif %}
+        </div>
       </div>
 
       <div class="meta-item">
         <strong>Categorías:</strong>
         <div class="categorias-list" style="margin-left:6px;">
-          {% for c in categorias %}
-            <span class="categoria-pill">{{ c.nomb_ca }}</span>
-          {% endfor %}
+            {% for c in product_categorias %}
+              <a href="{% url 'producto:lista' %}?categoria={{ c.pk }}" class="categoria-pill categoria-button">{{ c.nomb_ca }}</a>
+            {% empty %}
+              <span class="categoria-pill">—</span>
+            {% endfor %}
         </div>
       </div>
 
       {# Campos opcionales que podrían existir en el modelo - se muestran solo si tienen valor #}
       {% if producto.sku %}
-      <div class="meta-item"><strong>SKU:</strong><div style="margin-left:6px;">{{ producto.sku }}</div></div>
+        <div class="meta-item"><strong>SKU:</strong><div style="margin-left:6px;">{{ producto.sku }}</div></div>
       {% endif %}
       {% if producto.condicion %}
-      <div class="meta-item"><strong>Condición:</strong><div style="margin-left:6px;">{{ producto.condicion }}</div></div>
+        <div class="meta-item"><strong>Condición:</strong><div style="margin-left:6px;">{{ producto.condicion }}</div></div>
       {% endif %}
       {% if producto.fecha_publicacion %}
-      <div class="meta-item"><strong>Publicado:</strong><div style="margin-left:6px;">{{ producto.fecha_publicacion|date:'d M Y' }}</div></div>
+        <div class="meta-item"><strong>Publicado:</strong><div style="margin-left:6px;">{{ producto.fecha_publicacion|date:'d M Y' }}</div></div>
       {% endif %}
     </div>
 

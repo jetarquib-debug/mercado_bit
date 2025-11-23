@@ -77,6 +77,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'usuario.context_processors.usuario_actual',
+                'barra_market.context_processors.global_nav',
             ],
         },
     },

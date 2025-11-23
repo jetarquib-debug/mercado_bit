@@ -27,3 +27,8 @@
 @media (max-width:900px){
   .categorias-panel__inner{ width:100%; left:0 }
 }
+
+/* Loader simple para cuando el panel carga datos vía AJAX */
+.categorias-loader{ position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:1140; pointer-events:none }
+.categorias-loader .spinner{ width:36px; height:36px; border-radius:50%; border:4px solid rgba(0,0,0,0.08); border-top-color: #3b82f6; animation:spin 1s linear infinite }
+@keyframes spin{ to{ transform:rotate(360deg) } }

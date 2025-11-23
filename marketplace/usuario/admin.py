@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import (
     ImagenPerfilUsuario,
+    FondoPantallaUsuario,
     Pais, Departamento, Provincia, Distrito,
     CodigoPais,
     Usuario
@@ -101,4 +102,16 @@ class UsuarioAdmin(admin.ModelAdmin):
         ('Fechas', {
             'fields': ('fecha_registro',),
         }),
+    )
+
+
+@admin.register(FondoPantallaUsuario)
+class FondoPantallaUsuarioAdmin(admin.ModelAdmin):
+    list_display = ('id', 'usuario', 'is_active', 'is_default', 'fecha_subida')
+    list_filter = ('is_active', 'is_default', 'fecha_subida')
+    search_fields = ('usuario__email',)
+    ordering = ('-fecha_subida',)
+    fieldsets = (
+        ('Información', {'fields': ('usuario', 'imagen', 'is_active', 'is_default')}),
+        ('Metadatos', {'fields': ('fecha_subida',)}),
     )

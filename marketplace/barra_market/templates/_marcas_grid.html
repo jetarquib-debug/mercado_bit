@@ -1,7 +1,5 @@
 {% load static %}
-{% block css%}
   <link rel="stylesheet" href="{% static 'barra_market/marcas_grid.css' %}">
-{% endblock css %}
 <section class="marcas-grid marcas-slider">
 
   <div class="marcas-slider__wrap">
@@ -36,6 +34,5 @@
     <button class="marcas-btn marcas-next" aria-label="Siguiente">▶</button>
   </div>
 </section>
-{% block extra_js %}
-    <script src="{% static 'barra_market/marcas_slider.js' %}"></script>
-{% endblock extra_js %}
+<!-- Cargar el script directamente para asegurar que se ejecute incluso cuando la plantilla se incluye -->
+<script src="{% static 'barra_market/marcas_slider.js' %}"></script>

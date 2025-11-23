@@ -2,7 +2,8 @@
    🌟 MARCAS (con efecto 3D estilo categorías)
 ============================== */
 .marcas-grid {
-  margin: 0vh 4vw;
+  margin: 2vh 4vw;
+  padding-bottom: 4vh;
   text-align: center;
 }
 
@@ -32,7 +33,7 @@
 .marcas-slider__track {
   display: flex;
   gap: 3vw;
-  padding: 12px 8px;
+  padding: 4vh 8px;
   transition: transform 600ms cubic-bezier(.22, .9, .3, 1);
   will-change: transform;
 }

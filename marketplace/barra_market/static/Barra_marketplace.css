@@ -1,78 +1,97 @@
+/* Restauración y mejora visual (basado en la imagen 1)
+   - Cabecera con degradado morado más vivo.
+   - Botón "Categorías" en forma de píldora con borde blanco y sombra ligera.
+   - Búsqueda centrada, campo blanco redondeado con botón rosa.
+   - "Hola, Inicia sesión" a la derecha con dropdown coherente.
+   - Barra secundaria gris sutil debajo de la cabecera.
+   - Se mantienen transiciones suaves y accesibilidad mínima (role/aria están en el JS).
+*/
+/* Nota: Comentarios en el CSS explican los motivos de los cambios. */
+
+/* Reset y base */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: Arial, sans-serif;
-    }
-.general{
-    background-image: url('https://wallpapers.com/images/hd/white-pc-wo5wzl0cxtx52d1e.jpg');
-    width: 100vw;
-    height: 100vh;
-    background-repeat: no-repeat;
+}
+:root{
+    --header-height: 92px; /* aumentado: más espacio para logo, búsqueda y controles */
+}
+/* Hacer que el body sea un contenedor flex-column para fijar el footer al fondo
+   y evitar espacios en blanco al final de la página */
+html, body { height: 100%; }
+body { display: flex; flex-direction: column; min-height: 100vh; }
+.general {
+    background: url('barra_market/fondo_blanco.jpg');
     background-size: cover;
-    background-attachment: fixed;
+    flex: 1 0 auto;
+    width: 100%;
     overflow: auto;
+    padding-top: calc(var(--header-height) + 44px);
 }
+
+
+/* CABECERA PRINCIPAL */
 .header_contenedor {
-    display: flex;
-    background: linear-gradient(135deg, #6983f3, #8133cf, #d63384, #f06595);
+    display: block; /* el contenido se centra dentro de .header-inner */
+    padding: 6px 0 6px 0;
+    background: linear-gradient(90deg, #7b34ff 0%, #c643ff 50%, #ff6fa3 100%);
+    color: #fff;
+    /* fijar la cabecera para que permanezca visible al hacer scroll */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     width: 100vw;
-    height: 10vh;
+    z-index: 2000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    min-height: var(--header-height); /* altura definida por variable */
+ }
+
+
+/* Contenedor interior centrado con ancho máximo */
+.header-inner{
+    display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 0 10vw;
+    max-width: 100vw;
+    height: var(--header-height);
+    overflow: visible; /* permitir que los dropdowns y menús se muestren fuera del contenedor */
 }
+
+/* Asegurar que el header esté siempre por encima de paneles/overlays */
+.header_contenedor{ position:fixed; z-index:2000; }
+.header_contenedor_secundario{ position:fixed; top:var(--header-height); left:0; right:0; z-index:1999; }
+
+.dropdown-login .dropdown-menu{ z-index:2020; }
 
 .logo{
     display: flex;
     align-items: center;
-    margin-left: auto;
 }
-.logo img {
-    height: auto;
-    width: 15vw;
-}
+.logo img{ max-height: calc(var(--header-height) - 24px); width: auto; }
 .categorias{
-    display: flex;
-    color: white;
-    align-items: center;
-    margin-left: 2vw;
-    margin-right: 2vw;
+    display:flex; align-items:center; margin-right:2vw;
 }
-.categorias button {
-    background: none;
-    border: solid;
-    border-radius: 40px;
-    padding: 0.5vw;
-    color: white;
-    font-size: 1.5vw;
-    cursor: pointer;
+.categorias-toggle{
+    display:inline-flex; align-items:center; gap:12px; padding:0 24px; height: calc(var(--header-height) - 22px);
+    background: rgba(255,255,255,0.12); color:#fff; border-radius:32px; border:1px solid rgba(255,255,255,0.18);
+    box-shadow: 0 8px 22px rgba(0,0,0,0.10);
+    font-weight:700; cursor:pointer; transition:transform .12s ease, box-shadow .18s ease;
 }
-.search-bar {
-    display: inline;
-    width: 15vw;
-}
-.search-bar input {
-    width: 30vw;
-    height: 5vh;
-    padding: 0.5vw;
-    border-radius: 10px;
-    border: none;
-    font-size: 1vw;
-}
-.search-bar button {
-    padding: 0.5vw 1vw;
-    border: none;
-    border-radius: 0.5vw;
-    background-color: #f06595;
-    color: white;
-    font-size: 1vw;
-    cursor: pointer;
-}
-.registro{
-    display: flex;
-    color: white;
-    align-items: center;
-    padding-left: 2vw;
-}
+.categorias-toggle:hover{ transform:translateY(-1px); box-shadow:0 10px 24px rgba(0,0,0,0.08) }
+.categorias-toggle .arrow{ font-size: clamp(14px, 1.2vw, 20px); }
+.categorias-toggle{ font-size: clamp(16px, 1.6vw, 1.35rem); }
+.search-wrapper{ flex:1 1 auto; display:flex; justify-content:center; }
+.search-bar{ display:flex; align-items:center; gap:12px; flex:0 1 auto; justify-content:center; width:30vw; }
+.search-bar input[type=search]{ flex:1; padding:12px 16px; border-radius:32px 0 0 32px; border: none; outline:none; font-size:1.05rem; height: calc(var(--header-height) - 34px); box-sizing: border-box; }
+.search-bar button{ padding:12px 20px; border-radius:0 32px 32px 0; border:none; background:#ff6fa3; color:#fff; font-weight:700; cursor:pointer; height: calc(var(--header-height) - 34px); }
+.search-bar input[type=search]::placeholder{ color:#cfcfcf; font-size:1.02rem }
+.search-bar input[type=search]::placeholder{ color:#bdbdbd }
+.registro{ display:flex; align-items:center; gap:10px }
 
 /* Contenedor relativo para el dropdown de login */
 .registro.dropdown-login{
@@ -81,19 +100,21 @@
 .registro a {
     color: white;
     text-decoration: none;
-    font-size: 1.5vw;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
 }
 .compras{
     display: flex;
     color: white;
     align-items: center;
-    padding-left: 3vw;
-    padding-right: 3vw;
+    padding-left: 12px;
+    padding-right: 12px;
 }
 .compras a {
     color: white;
     text-decoration: none;
-    font-size: 1.5vw;
+    font-size: 2.5vh;
 }
 .carrito{
     display: flex;
@@ -104,30 +125,52 @@
 .carrito a {
     color: white;
     text-decoration: none;
-    font-size: 1.5vw;
+    font-size: 2.5vh;
 }
+
+/* Flecha / indicador de dropdown: rotación suave al abrir/cerrar */
+.dropdown-login .dropdown-toggle .arrow {
+    display: inline-block;
+    transition: transform .18s ease;
+    transform-origin: 50% 50%;
+}
+.dropdown-login.open .dropdown-toggle .arrow {
+    transform: rotate(180deg);
+}
+
+/* Flecha del botón Categorías */
+.categorias-toggle .arrow { transition: transform .18s ease; display:inline-block; }
+.categorias-toggle.open .arrow { transform: rotate(180deg); }
+
+/* Ajustes visuales adicionales para asegurar separación y evitar desajustes */
+.header-inner > * { display: flex; align-items: center; }
+.registro.dropdown-login { margin-left: 12px; }
 .header_contenedor_secundario {
     display: flex;
-    background: linear-gradient(135deg, rgb(53, 52, 52), rgb(124, 123, 123));
-    height: 3vh;
-    width: 100vw;
-    padding-left: 1vw;
+    background: linear-gradient(90deg, #0b3d91 0%, #1e63c5 100%);
+    height: 44px; /* barra secundaria estable */
+    width: 100%;
     align-items: center;
 }
 .header_contenedor_secundario a{
     color: white;
     text-decoration: none;
-    font-size: 1vw;
+    font-size: 12px;
     margin-right: 2vw;
 }
 /* ===== Dropdown de registro/inicio de sesión ===== */
 .dropdown-login .dropdown-toggle{
     color: white;
     text-decoration: none;
-    font-size: 1.5vw;
+    font-size: 2.5vh; /* tamaño solicitado */
     cursor: pointer;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap; /* evitar que 'Hola, Inicia sesión' se divida en varias líneas */
 }
+/* Asegurar el toggle de login reciba clicks incluso si hay overlays */
+.dropdown-login .dropdown-toggle{ position: relative; z-index: 10060; pointer-events: auto; }
 .tienda-avatar{
     width: 36px;
     height: 36px;
@@ -135,21 +178,8 @@
     object-fit: cover;
     border: 2px solid rgba(255,255,255,0.9);
 }
-.dropdown-login .dropdown-menu{
-    position: absolute;
-    top: 110%;
-    right: 0;
-    background: white;
-    min-width: 200px;
-    border-radius: 6px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.12);
-    padding: 1vh 0;
-    display: none;
-    z-index: 50;
-}
-.dropdown-login.open .dropdown-menu{
-    display: block;
-}
+.dropdown-login .dropdown-menu{ position:absolute; top:calc(100% + 8px); right:0; background:#fff; min-width:220px; border-radius:8px; box-shadow:0 8px 20px rgba(0,0,0,0.12); padding:8px 0; transform:translateY(-6px); opacity:0; visibility:hidden; transition:all .14s ease }
+.dropdown-login.open .dropdown-menu{ transform:translateY(0); opacity:1; visibility:visible }
 .dropdown-login .dropdown-menu ul{
     list-style: none;
 }
@@ -180,17 +210,8 @@
     align-items: center;
     gap: 0.5rem;
 }
-.dropdown-login .user-avatar{
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid rgba(255,255,255,0.85);
-}
-.dropdown-login .user-name{
-    font-size: 1.1vw;
-    color: white;
-}
+.dropdown-login .user-avatar{ width:42px; height:42px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.9) }
+.dropdown-login .user-name{ color:#fff; font-weight:600; font-size:1.05rem }
 .dropdown-login .profile-header{
     display: flex;
     gap: 0.75rem;
@@ -233,33 +254,20 @@
     font-size: 1rem;
 }
 
-.texto_comercial p {
-    text-align: center;
-    color: transparent;
-    font-weight: bold;
-    margin-top: 5vh;
-    font-size: 2.5vw;
-    font-weight: bold;
-    text-transform: uppercase; /* Convierte el texto a mayúsculas */
-    
-    /* Gradiente de colores con un ángulo de 66 grados */
-    background-image: linear-gradient(135deg, rgb(53, 52, 52), rgb(255, 255, 255),rgb(53, 52, 52), rgb(116, 114, 114), rgb(53, 52, 52), rgb(255, 255, 255),rgb(53, 52, 52), rgb(116, 114, 114));
-    background-size: 400% 400%; /* Hacemos el gradiente más grande para el movimiento */
-    background-clip: text; /* Asegura que el gradiente se aplique solo al texto */
-    
-    /* Animación para mover el gradiente de colores de forma fluida */
-    animation: rainbowText 35s linear infinite; /* Animación más rápida (35 segundos) */
-}
+.texto_comercial p{ text-align:center; color:#222; font-weight:700; margin-top:2.25rem; margin-bottom:1rem; font-size:1.25rem; text-transform:uppercase }
 
-    /* Animación arcoíris para el título */
-@keyframes rainbowText {
-    0% {
-        background-position: 400% 0;
-    }
-    50% {
-        background-position: 0 100%;
-    }
-    100% {
-        background-position: 400% 0;
-    }
+/* Pie de página */
+.site-footer{
+    background: #111827;
+    color: #e6eef8;
+    padding: 28px 18px;
+    flex-shrink: 0; /* evitar que el footer se comprima si el layout flex cambia */
 }
+.site-footer .footer-inner{ max-width:1200px; margin:0 auto; display:flex; gap:24px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap }
+.site-footer a{ color:#9fd1ff; text-decoration:none }
+.site-footer .col{ min-width:180px }
+.site-footer .copyright{ font-size:0.9rem; opacity:0.8 }
+
+/* Nota: la definición previa de la barra secundaria (6px gris) se eliminó porque
+    conflictuaba con la versión azul/visible definida arriba (44px). Se mantiene
+    la barra secundaria azul y de 44px para un aspecto consistente. */

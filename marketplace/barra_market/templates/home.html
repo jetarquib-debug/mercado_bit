@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Marketplace{% endblock title %}</title>
+    <link rel="icon" type="image/png" href="{% static 'logo/logo.ico' %}">
 
     <!-- CSS principal -->
     <link rel="stylesheet" href="{% static 'Barra_marketplace.css' %}">
@@ -17,8 +18,8 @@
 </head>
 
 <body>
-<div class="general">
-    <header class="header_contenedor">
+<header class="header_contenedor">
+    <div class="header-inner">
         <div class="logo">
             <a href="{% url 'home' %}"><img src="{% static 'logo/logo.ico' %}"></a>
         </div>
@@ -27,7 +28,7 @@
             <button id="categorias" class="categorias-toggle">Categorías <span class="arrow">▾</span></button>
         </div>
 
-        <div>
+        <div class="search-wrapper">
             <form class="search-bar" method="get" action="{% url 'producto:lista' %}">
                 <input type="search" name="q" placeholder="Buscar en Mercado BIT" aria-label="Buscar productos">
                 <button type="submit">Buscar</button>
@@ -57,7 +58,6 @@
                     </ul>
                 </div>
             {% elif usuario_profile %}
-                {# Mostrar avatar y nombre con dropdown similar a la imagen adjunta #}
                 <a href="#" class="dropdown-toggle user-toggle">
                     <img src="{{ usuario_profile.imagen_principal|default:'/media/usuario/default.png' }}" alt="avatar" class="user-avatar" />
                     <span class="user-name">{{ usuario_profile.nombres|default:usuario_profile.email }}</span>
@@ -78,7 +78,7 @@
                     </ul>
                 </div>
             {% else %}
-                <a href="#" class="dropdown-toggle">Hola, <span class="small">Inicia sesión ▾</span></a>
+                    <a href="#" class="dropdown-toggle">Hola, <span class="small">Inicia sesión</span> <span class="arrow">▾</span></a>
                 <div class="dropdown-menu">
                     <ul>
                         <li class="divider" aria-hidden="true"></li>
@@ -100,10 +100,12 @@
         <div class="carrito">
             <a href="{% url 'carrito:ver' %}">🛒 <span id="cart-count" style="display:none; background:#ff3b30; color:#fff; padding:0 6px; border-radius:999px; font-size:0.85rem; margin-left:6px;">0</span></a>
         </div>
-    </header>
-    
-    <div class="header_contenedor_secundario">
     </div>
+</header>
+<div class="header_contenedor_secundario">
+</div>
+<div class="general">
+    
     {% include "_categorias_dropdown.html" %}
     <!-- 🔹 Bloque para el contenido dinámico -->
     {% block content %}
@@ -121,36 +123,31 @@
         {% include "_marcas_grid.html" %}
     {% endblock content %}
 </div>
-{% block js %}
-<script>
-    (function(){
-        const toggle = document.querySelector('.dropdown-login .dropdown-toggle');
-        const container = document.querySelector('.dropdown-login');
-        if(!toggle || !container) return;
-
-        // Evitar que el enlace navegue
-        toggle.addEventListener('click', function(ev){
-            ev.preventDefault();
-            container.classList.toggle('open');
-        });
-
-        // Cerrar al hacer click fuera
-        document.addEventListener('click', function(ev){
-            if (!container.contains(ev.target)) {
-                container.classList.remove('open');
-            }
-        });
-
-        // Evitar que al hacer click dentro del dropdown se cierre automáticamente
-        const menu = container.querySelector('.dropdown-menu');
-        if (menu) {
-            menu.addEventListener('click', function(ev){ ev.stopPropagation(); });
-        }
-    })();
-</script>
-{% endblock js %}
+<!-- Footer -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="col">
+            <h4>Mercado BIT</h4>
+            <p class="copyright">&copy; {{ now|default:None }} Mercado BIT. Todos los derechos reservados.</p>
+        </div>
+        <div class="col">
+            <h4>Enlaces</h4>
+            <ul>
+                <li><a href="#">Contacto</a></li>
+                <li><a href="#">Términos</a></li>
+                <li><a href="#">Privacidad</a></li>
+            </ul>
+        </div>
+        <div class="col">
+            <h4>Síguenos</h4>
+            <p><a href="#">Facebook</a> · <a href="#">Instagram</a></p>
+        </div>
+    </div>
+</footer>
+{% block js %}{% endblock js %}
 
     <!-- Cargar carrito.js globalmente (siempre disponible) -->
     <script src="{% static 'carrito/carrito.js' %}"></script>
+    <script src="{% static 'barra_market/dropdown.js' %}" defer></script>
 </body>
 </html>

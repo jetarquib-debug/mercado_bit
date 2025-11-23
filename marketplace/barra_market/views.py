@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.utils import timezone
+from django.http import JsonResponse
 
 # Importamos el modelo Promocion para pasar las promociones al template
 try:
@@ -55,3 +56,25 @@ def home(request):
         login_form = None
 
     return render(request, 'home.html', {'promociones': promociones, 'categorias': categorias, 'marcas': marcas, 'login_form': login_form})
+
+
+def api_categorias_marcas(request):
+    """Endpoint JSON que devuelve las categorías y marcas.
+
+    Motivo de la adición: en algunos templates el context processor puede
+    no entregar las variables (p. ej. por errores de import en tiempo de
+    ejecución). Este endpoint permite que el frontend haga una petición
+    y obtenga los datos de forma fiable (fallback dinámico).
+    """
+    try:
+        from producto.models import Categoria, Marca
+        categorias_qs = Categoria.objects.all().order_by('nomb_ca')
+        marcas_qs = Marca.objects.all().order_by('nomb_marca')
+        categorias = [{'id': c.pk, 'nomb_ca': c.nomb_ca} for c in categorias_qs]
+        marcas = [{'id': m.pk, 'nomb_marca': m.nomb_marca} for m in marcas_qs]
+    except Exception:
+        # En caso de fallo devolvemos listas vacías en vez de 500.
+        categorias = []
+        marcas = []
+
+    return JsonResponse({'categorias': categorias, 'marcas': marcas})

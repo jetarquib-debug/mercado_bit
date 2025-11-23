@@ -13,4 +13,11 @@ def usuario_actual(request):
         except Exception:
             usuario = None
 
-    return {'usuario_profile': usuario}
+    background = None
+    if usuario:
+        try:
+            background = usuario.fondo_url
+        except Exception:
+            background = None
+
+    return {'usuario_profile': usuario, 'usuario_background': background}
